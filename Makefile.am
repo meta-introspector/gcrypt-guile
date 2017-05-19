@@ -52,12 +52,22 @@ SOURCES =  \
 	gcrypt/pk-crypto.scm					\
 	gcrypt/utils.scm
 
-# TESTS =							\
-# 	tests/test-crypto.scm
+TESTS =							\
+	tests/base16.scm				\
+	tests/hash.scm					\
+	tests/pk-crypto.scm
 
 TEST_EXTENSIONS = .scm
 
-SCM_LOG_COMPILER = $(GUILE)
+SCM_LOG_DRIVER =				\
+	$(top_builddir)/pre-inst-env		\
+	$(GUILE) --no-auto-compile -e main	\
+	$(top_srcdir)/build-aux/test-driver.scm
+
+# Tell 'build-aux/test-driver.scm' to display only source file names,
+# not indivdual test names.
+AM_SCM_LOG_DRIVER_FLAGS = --brief=yes
+
 AM_SCM_LOG_FLAGS = --no-auto-compile -L $(top_srcdir)
 
 CLEANFILES = 						\
@@ -69,5 +79,5 @@ CLEANFILES = 						\
 EXTRA_DIST = 						\
 	$(SOURCES)					\
 	$(TESTS)					\
+	build-aux/test-driver.scm			\
 	pre-inst-env.in
-#	tests/utils.scm
