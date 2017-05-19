@@ -45,7 +45,12 @@ moddir=$(prefix)/share/guile/site/2.0
 godir=$(libdir)/guile/2.0/ccache
 
 SOURCES =  \
-	gcrypt/package-config.scm
+	gcrypt/base16.scm					\
+	gcrypt/common.scm					\
+	gcrypt/hash.scm						\
+	gcrypt/package-config.scm				\
+	gcrypt/pk-crypto.scm					\
+	gcrypt/utils.scm
 
 # TESTS =							\
 # 	tests/test-crypto.scm
