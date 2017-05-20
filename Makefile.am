@@ -49,14 +49,17 @@ SOURCES =  \
 	gcrypt/base64.scm					\
 	gcrypt/common.scm					\
 	gcrypt/hash.scm						\
+	gcrypt/hmac.scm						\
 	gcrypt/package-config.scm				\
 	gcrypt/pk-crypto.scm					\
+	gcrypt/random.scm					\
 	gcrypt/utils.scm
 
 TESTS =							\
 	tests/base16.scm				\
 	tests/base64.scm				\
 	tests/hash.scm					\
+	tests/hmac.scm					\
 	tests/pk-crypto.scm
 
 TEST_EXTENSIONS = .scm
