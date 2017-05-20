@@ -19,8 +19,10 @@
 (define-module (gcrypt common)
   #:use-module (gcrypt package-config)
   #:use-module (system foreign)
+  #:use-module (ice-9 match)
   #:export (gcrypt-version
-            libgcrypt-func))
+            libgcrypt-func
+            error-source error-string))
 
 ;;; Commentary:
 ;;;
@@ -45,5 +47,30 @@
     (lambda ()
       "Return the version number of libgcrypt as a string."
       version)))
+
+(define error-source
+  (let* ((ptr  (libgcrypt-func "gcry_strsource"))
+         (proc (pointer->procedure '* ptr (list int))))
+    (lambda (err)
+      "Return the error source (a string) for ERR, an error code as thrown
+along with 'gcry-error'."
+      (pointer->string (proc err)))))
+
+(define error-string
+  (let* ((ptr  (libgcrypt-func "gcry_strerror"))
+         (proc (pointer->procedure '* ptr (list int))))
+    (lambda (err)
+      "Return the error description (a string) for ERR, an error code as
+thrown along with 'gcry-error'."
+      (pointer->string (proc err)))))
+
+(define (gcrypt-error-printer port key args default-printer)
+  "Print the gcrypt error specified by ARGS."
+  (match args
+    ((proc err)
+     (format port "In procedure ~a: ~a: ~a"
+             proc (error-source err) (error-string err)))))
+
+(set-exception-printer! 'gcry-error gcrypt-error-printer)
 
 ;;; gcrypt.scm ends here

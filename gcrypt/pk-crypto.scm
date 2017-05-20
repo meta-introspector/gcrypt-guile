@@ -22,7 +22,6 @@
 
   #:use-module (system foreign)
   #:use-module (rnrs bytevectors)
-  #:use-module (ice-9 match)
   #:use-module (ice-9 rdelim)
   #:export (canonical-sexp?
             error-source
@@ -96,22 +95,6 @@
       ;; existing one.)
       (set-pointer-finalizer! ptr finalize-canonical-sexp!))
     sexp))
-
-(define error-source
-  (let* ((ptr  (libgcrypt-func "gcry_strsource"))
-         (proc (pointer->procedure '* ptr (list int))))
-    (lambda (err)
-      "Return the error source (a string) for ERR, an error code as thrown
-along with 'gcry-error'."
-      (pointer->string (proc err)))))
-
-(define error-string
-  (let* ((ptr  (libgcrypt-func "gcry_strerror"))
-         (proc (pointer->procedure '* ptr (list int))))
-    (lambda (err)
-      "Return the error description (a string) for ERR, an error code as
-thrown along with 'gcry-error'."
-      (pointer->string (proc err)))))
 
 (define string->canonical-sexp
   (let* ((ptr  (libgcrypt-func "gcry_sexp_new"))
@@ -394,14 +377,5 @@ use pattern matching."
                 (error "unsupported sexp item type" item))))
 
        (write sexp)))))
-
-(define (gcrypt-error-printer port key args default-printer)
-  "Print the gcrypt error specified by ARGS."
-  (match args
-    ((proc err)
-     (format port "In procedure ~a: ~a: ~a"
-             proc (error-source err) (error-string err)))))
-
-(set-exception-printer! 'gcry-error gcrypt-error-printer)
 
 ;;; pk-crypto.scm ends here
