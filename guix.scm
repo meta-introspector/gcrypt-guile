@@ -55,9 +55,9 @@
      `(("guile" ,guile-2.2)
        ("libgcrypt" ,libgcrypt)))
     (home-page "https://notabug.org/cwebber/guile-gcrypt")
-    (synopsis "")
-    (description "ActivityStreams and ActivityPub implementation in Guile.
-Includes a full (currently demo) web server.")
+    (synopsis "Crypto library for Guile using libgcrypt")
+    (description "guile-gcrypt uses Guile's foreign function interface to wrap
+libgcrypt to provide a variety of encryption tooling.")
     (license gpl3+)))
 
 guile-gcrypt
