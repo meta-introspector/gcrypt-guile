@@ -2,10 +2,16 @@ AC_INIT([guile-gcrypt], [0.1.dev], [cwebber@dustycloud.org])
 
 PKG_CHECK_MODULES([GUILE], [guile-2.2])
 
-AM_INIT_AUTOMAKE([-Wall -Werror foreign])
-
+AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 
+AM_INIT_AUTOMAKE([-Wall -Werror foreign])
+
+m4_ifdef([GUILE_PROGS],
+         [],
+         [AC_ERROR(could not locate guile aclocal macros)])
+
+GUILE_PKG([2.2 2.0])
 GUILE_PROGS
 
 AC_CONFIG_FILES([Makefile gcrypt/package-config.scm])

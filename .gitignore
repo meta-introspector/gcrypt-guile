@@ -16,3 +16,6 @@ Makefile.in
 /test-driver
 /install-sh
 /gcrypt/package-config.scm
+/build-aux/install-sh
+/build-aux/missing
+/guile-gcrypt-*.tar.gz
