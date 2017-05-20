@@ -46,6 +46,7 @@ godir=$(libdir)/guile/2.0/ccache
 
 SOURCES =  \
 	gcrypt/base16.scm					\
+	gcrypt/base64.scm					\
 	gcrypt/common.scm					\
 	gcrypt/hash.scm						\
 	gcrypt/package-config.scm				\
@@ -54,6 +55,7 @@ SOURCES =  \
 
 TESTS =							\
 	tests/base16.scm				\
+	tests/base64.scm				\
 	tests/hash.scm					\
 	tests/pk-crypto.scm
 
