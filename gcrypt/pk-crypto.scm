@@ -22,6 +22,7 @@
 
   #:use-module (system foreign)
   #:use-module (rnrs bytevectors)
+  #:use-module (ice-9 match)
   #:use-module (ice-9 rdelim)
   #:export (canonical-sexp?
             error-source
@@ -221,7 +222,15 @@ Return #f if that element does not exist, or if it's a list."
 
 (define (number->canonical-sexp number)
   "Return an s-expression representing NUMBER."
-  (string->canonical-sexp (string-append "#" (number->string number 16) "#")))
+  (let ((hex-number
+         (match (number->string number 16)
+           ;; Append a 0 if necessary.  For whatever reason gcrypt
+           ;; rejects hex numbers that don't have an even number of
+           ;; digits.
+           ((? (lambda (s) (odd? (string-length s))) odd-string)
+            (string-append "0" odd-string))
+           (even-str even-str))))
+    (string->canonical-sexp (string-append "#" hex-number "#"))))
 
 (define* (bytevector->hash-data bv
                                 #:optional
