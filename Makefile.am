@@ -84,6 +84,7 @@ CLEANFILES = 						\
 EXTRA_DIST = 						\
 	$(SOURCES)					\
 	$(TESTS)					\
+        guix.scm					\
 	build-aux/test-driver.scm			\
 	pre-inst-env.in
 
