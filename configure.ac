@@ -4,7 +4,7 @@ AC_INIT([Guile-Gcrypt], [0.1.dev], [cwebber@dustycloud.org],
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 
-AM_INIT_AUTOMAKE([-Wall -Werror foreign])
+AM_INIT_AUTOMAKE([-Wall -Werror gnu])
 
 m4_ifdef([GUILE_PROGS],
          [],

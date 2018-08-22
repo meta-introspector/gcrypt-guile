@@ -19,3 +19,5 @@ Makefile.in
 /build-aux/install-sh
 /build-aux/missing
 /guile-gcrypt-*.tar.gz
+/INSTALL
+/config.cache

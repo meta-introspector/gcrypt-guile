@@ -1,0 +1,20 @@
+Guile-Gcrypt — Guile bindings to Libgcrypt
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Guile-Gcrypt provides a Guile 2.x interface to a subset of the
+GNU Libgcrypt crytographic library, which is itself used by the
+GNU Privacy Guard (GPG).
+
+Guile-Gcrypt provides modules for cryptographic hash functions,
+message authentication codes (MAC), public-key crytography, strong
+randomness, and more.  It is implemented using the foreign function
+interface (FFI) of Guile.
+
+Requirements:
+
+  • GNU Guile 2.x, https://gnu.org/software/guile/
+  • GNU Libgcrypt 1.8.x or later, https://gnupg.org/
+
+For more information, patches, bug reports, and all that, see:
+
+  https://notabug.org/cwebber/guile-gcrypt
