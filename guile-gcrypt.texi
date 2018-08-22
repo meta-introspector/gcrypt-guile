@@ -1,0 +1,275 @@
+\input texinfo
+@c -*-texinfo-*-
+
+@c %**start of header
+@setfilename guile-gcrypt.info
+@documentencoding UTF-8
+@settitle Guile-Gcrypt Reference Manual
+@c %**end of header
+
+@include version.texi
+
+@copying
+Copyright @copyright{} 2018 Ludovic Courtès@*
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3 or
+any later version published by the Free Software Foundation; with no
+Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.  A
+copy of the license is included in the section entitled ``GNU Free
+Documentation License''.
+@end copying
+
+@dircategory The Algorithmic Language Scheme
+@direntry
+* Guile-Gcrypt: (guile-gcrypt).   Cryptographic library for Guile.
+@end direntry
+
+@titlepage
+@title Guile-Gcrypt Reference Manual
+@author The Guile-Gcrypt Developers
+
+@page
+@vskip 0pt plus 1filll
+Edition @value{EDITION} @*
+@value{UPDATED} @*
+
+@insertcopying
+@end titlepage
+
+@contents
+
+@c *********************************************************************
+@node Top
+@top Guile-Gcrypt
+
+This manual documents Guile-Gcrypt, a Guile 2.x interface to the
+GNU@tie{}Libgcrypt crytographic library, which is itself used by the
+GNU@tie{}Privacy Guard (GPG).  @xref{Top,,, gcrypt, The Libgcrypt
+Library}, for more information on Libgcrypt.
+
+Actually this is very much a stub more than an actual manual.  Please
+visit @uref{https://notabug.org/cwebber/guile-gcrypt} or email
+@email{guile-user@@gnu.org} if you'd like to give a hand!
+
+@menu
+* Introduction::                      Getting started.
+* Hash Functions::                    SHA1 and its friends.
+* Message Authentication Codes::      HMAC.
+* Public-Key Cryptography::           Signing and encrypting.
+* Random Numbers::                    Generating random numbers.
+* Miscellany::                        Bonuses!
+
+* GNU Free Documentation License::    The license of this manual.
+* Index::                             Index of concepts and procedures.
+@end menu
+
+@node Introduction
+@chapter Introduction
+
+@cindex modules
+Libgcrypt functionality is exposed in a set of Guile modules in the
+@code{(gcrypt @dots{})} name space (@pxref{Modules,,, guile, The Guile
+Reference Manual}).  Each module provides specific functionality from
+Libgcrypt.  For example, the following code imports cryptographic hash
+functions:
+
+@lisp
+(use-modules (gcrypt hash))
+@end lisp
+
+@findex string->canonical-sexp
+Procedure names are not a direct mapping of the C function names;
+instead, more ``Schemey'' names are chosen for your enjoyment.  For
+example, the Libgcrypt's C function called @code{gcry_sexp_new} is
+exposed in Scheme as the @code{string->canonical-sexp} procedure in the
+@code{(gcrypt pk-crypto)}---more pleasant to the eye, no?
+
+@cindex error handling
+@cindex exceptions
+When an error occurs, Guile-Gcrypt procedures raise an exception with
+the key @code{'gcry-error} (@pxref{Exceptions,,, guile, The Guile
+Reference Manual}).  Exceptions have two arguments: the name of the
+procedure that raised it, and an @dfn{error number}.  The @code{(gcrypt
+common)} modules provides procedures to interpret error numbers:
+@code{error-source} and @code{error-string}.  Here's an example showing
+how you could report Libgcrypt errors to the user:
+
+@lisp
+(catch 'gcry-error
+  (lambda ()
+    ;; Do something with Guile-Gcrypt...
+    )
+  (lambda (key proc err)
+    (format (current-error-port) "error from '~a': ~a: ~a~%"
+            proc (error-source err) (error-string err))))
+@end lisp
+
+These two procedures are detailed below.
+
+@deffn {Scheme Procedure} error-source @var{err}
+Return the error source (a string) for @var{err}, an error code as thrown
+along with @code{gcry-error}.
+@end deffn
+
+@deffn {Scheme Procedure} error-string @var{err}
+Return the error description (a string) for @var{err}, an error code as
+thrown along with @code{gcry-error}.
+@end deffn
+
+@node Hash Functions
+@chapter Hash Functions
+
+The @code{(gcrypt hash)} module exports @dfn{cryptographic hash
+functions} (@pxref{Hashing,,, gcrypt, The Libgcrypt Library}).
+Currently only a small subset of hash functions is exposed by
+Guile-Gcrypt, listed here.
+
+@deffn {Scheme Procedure} sha1 @var{bv}
+@deffnx {Scheme Procedure} sha256 @var{bv}
+Return the SHA1 or SHA256 hash of the data in @var{bv}, a bytevector.
+The returned hash is itself represented as a bytevector
+(@pxref{Bytevectors,,, guile, The Guile Reference Manual}).
+@end deffn
+
+@deffn {Scheme Procedure} open-sha256-port
+Return two values: an output port, and a thunk.  When the thunk is called,
+it returns the SHA256 hash (a bytevector) of all the data written to the
+output port.
+@end deffn
+
+@deffn {Scheme Procedure} port-sha256 @var{port}
+Return the SHA256 hash (a bytevector) of all the data drained from
+@var{port}.
+@end deffn
+
+@deffn {Scheme Procedure} file-sha256 @var{file}
+Return the SHA256 hash (a bytevector) of @var{file}.
+@end deffn
+
+@deffn {Scheme Procedure} open-sha256-input-port @var{port}
+Return an input port that wraps @var{port} and a thunk to get the hash of all the
+data read from @var{port}.  The thunk always returns the same value.
+@end deffn
+
+@node Message Authentication Codes
+@chapter Message Authentication Codes
+
+The @code{(gcrypt hmac)} module provides procedures to deal with
+@dfn{message authentication codes} or @dfn{MACs} (@pxref{Message
+Authentication Codes,,, gcrypt, The Libgcrypt Library}).
+
+@node Public-Key Cryptography
+@chapter Public-Key Cryptography
+
+@cindex public-key cryptography
+@cindex canonical S-expressions
+Tools for @dfn{public-key cryptography} (@pxref{Public Key
+cryptography,,, gcrypt, The Libgcrypt Library}) are provided by the
+@code{(gcrypt pk-crypto)} module.
+
+This module includes code to deal with @dfn{canonical S-expressions} (or
+``sexps'') @uref{http://people.csail.mit.edu/rivest/Sexp.txt, as defined
+by Rivest et al.}  They are used to specify public-key cryptography
+parameters (@pxref{Used S-expressions,,, gcrypt, The Libgcrypt
+Library}).  Naturally, there are procedures to convert a Guile sexp to a
+Libgcrypt canonical sexp object and @i{vice versa}:
+
+@deffn {Scheme Procedure} canonical-sexp->sexp @var{sexp}
+Return a Scheme sexp corresponding to @var{sexp}.  This is particularly useful to
+compare sexps (since Libgcrypt does not provide an @code{equal?} procedure), or to
+use pattern matching.
+@end deffn
+
+@deffn {Scheme Procedure} sexp->canonical-sexp @var{sexp}
+Return a canonical sexp equivalent to @var{sexp}, a Scheme sexp as returned by
+@code{canonical-sexp->sexp}.
+@end deffn
+
+@deffn {Scheme Procedure} string->canonical-sexp @var{str}
+Parse @var{str} and return the corresponding gcrypt s-expression.
+@end deffn
+
+@deffn {Scheme Procedure} canonical-sexp->string @var{sexp}
+Return a textual representation of @var{sexp}.
+@end deffn
+
+@cindex key pair generation
+@cindex generating key pairs
+For example, here is how you would generate an Ed25519 key pair and
+display its public key as a canonical sexp:
+
+@findex generate-key
+@findex find-sexp-token
+@lisp
+(use-modules (gcrypt pk-crypto))
+
+(let* ((parameters (sexp->canonical-sexp
+                     '(genkey
+                        (ecdsa (curve Ed25519) (flags rfc6979)))))
+       (pair       (generate-key parameters))
+       (public     (find-sexp-token pair 'public-key)))
+  (display (canonical-sexp->string public)))
+
+@print{} 
+(public-key 
+ (ecc 
+  (curve Ed25519)
+  (q #141D9C42@dots{}CE853B#)
+  )
+ )
+@end lisp
+
+Notice that we did @emph{not} pass @code{pair} to
+@code{canonical-sexp->sexp}: that would have worked, but the private key
+would have been copied to memory managed by the garbage collector, which
+is a security risk---Libgcrypt might have stored the private key in
+so-called ``secure memory'' protected from swap, whereas Guile does no
+such thing for its objects (@pxref{Initializing the library, secure
+memory,, gcrypt, The Libgcrypt Library}).  Thus the above example uses
+@code{find-sexp-token}, which accesses the canonical sexp directly, in
+search for the @code{public-key} symbol.
+
+@xref{Used S-expressions,,, gcrypt, The Libgcrypt Library}, for more
+information on the canonical sexps consumed and produced by public-key
+cryptography functions.
+
+@node Random Numbers
+@chapter Random Numbers
+The @code{(gcrypt random)} module provides tools to generate random
+number of different quality levels (@pxref{Random Numbers,,, gcrypt, The
+Libgcrypt Library}).
+
+@node Miscellany
+@chapter Miscellany
+
+As a bonus, Guile-Gcrypt provides two useful modules:
+
+@itemize
+@item @code{(gcrypt base16)} provides procedures to encode and decode
+hexadecimal strings;
+
+@item @code{(gcrypt base64)} provides procedures to encode and decode
+base64 strings as defined in @uref{https://tools.ietf.org/html/rfc4648,
+RFC 4648}.
+@end itemize
+
+@c *********************************************************************
+@node GNU Free Documentation License
+@appendix GNU Free Documentation License
+@cindex license, GNU Free Documentation License
+@include fdl-1.3.texi
+
+@c *********************************************************************
+@node Index
+@unnumbered Index
+@printindex cp
+@syncodeindex tp fn
+@syncodeindex vr fn
+@printindex fn
+
+@bye
+
+@c Local Variables:
+@c ispell-local-dictionary: "american";
+@c End:

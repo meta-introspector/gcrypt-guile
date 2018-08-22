@@ -86,3 +86,6 @@ EXTRA_DIST = 						\
 	$(TESTS)					\
 	build-aux/test-driver.scm			\
 	pre-inst-env.in
+
+info_TEXINFOS = guile-gcrypt.texi
+guile_gcrypt_TEXINFOS = fdl-1.3.texi
