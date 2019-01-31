@@ -6,9 +6,9 @@ AC_CONFIG_MACRO_DIR([m4])
 
 AM_INIT_AUTOMAKE([-Wall -Werror gnu])
 
-m4_ifdef([GUILE_PROGS],
-         [],
-         [AC_ERROR(could not locate guile aclocal macros)])
+dnl We require guile.m4, from Guile.  Make sure it's available.
+m4_pattern_forbid([^GUILE_P])
+m4_pattern_allow([^GUILE_PKG_ERRORS])
 
 GUILE_PKG([2.2 2.0])
 GUILE_PROGS
