@@ -1,5 +1,5 @@
 ;;; guile-gcrypt --- crypto tooling for guile
-;;; Copyright © 2013, 2014, 2017 Ludovic Courtès <ludo@gnu.org>
+;;; Copyright © 2013, 2014, 2017, 2019 Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;; This file is part of guile-gcrypt.
 ;;;
@@ -42,7 +42,9 @@
 In Guile <= 2.0.9, CBIPs were always fully buffered, so the
 'open-sha256-input-port' does not work there."
   (false-if-exception
-   (setvbuf (make-custom-binary-input-port "foo" pk #f #f #f) _IONBF)))
+   (setvbuf (make-custom-binary-input-port "foo" pk #f #f #f)
+            (cond-expand ((and guile-2 (not guile-2.2)) _IONBF)
+                         (else 'none)))))
 
 
 (test-begin "hash")

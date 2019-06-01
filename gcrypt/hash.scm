@@ -1,5 +1,5 @@
 ;;; guile-gcrypt --- crypto tooling for guile
-;;; Copyright © 2012, 2013, 2014, 2015, 2016 Ludovic Courtès <ludo@gnu.org>
+;;; Copyright © 2012, 2013, 2014, 2015, 2016, 2019 Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;; This file is part of guile-gcrypt.
 ;;;
@@ -176,7 +176,9 @@ data read from PORT.  The thunk always returns the same value."
   (define (unbuffered port)
     ;; Guile <= 2.0.9 does not support 'setvbuf' on custom binary input ports.
     ;; If you get a wrong-type-arg error here, the fix is to upgrade Guile.  :-)
-    (setvbuf port _IONBF)
+    (setvbuf port
+             (cond-expand ((and guile-2 (not guile-2.2)) _IONBF)
+                          (else 'none)))
     port)
 
   (values (unbuffered (make-custom-binary-input-port "sha256" read! #f #f #f))

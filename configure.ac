@@ -10,7 +10,7 @@ dnl We require guile.m4, from Guile.  Make sure it's available.
 m4_pattern_forbid([^GUILE_P])
 m4_pattern_allow([^GUILE_PKG_ERRORS])
 
-GUILE_PKG([2.2 2.0])
+GUILE_PKG([3.0 2.2 2.0])
 GUILE_PROGS
 
 AC_CONFIG_FILES([Makefile gcrypt/package-config.scm])

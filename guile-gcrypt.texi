@@ -10,7 +10,7 @@
 @include version.texi
 
 @copying
-Copyright @copyright{} 2018 Ludovic Courtès@*
+Copyright @copyright{} 2018, 2019 Ludovic Courtès@*
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -43,7 +43,7 @@ Edition @value{EDITION} @*
 @node Top
 @top Guile-Gcrypt
 
-This manual documents Guile-Gcrypt, a Guile 2.x interface to the
+This manual documents Guile-Gcrypt, a Guile 2.x/3.x interface to the
 GNU@tie{}Libgcrypt crytographic library, which is itself used by the
 GNU@tie{}Privacy Guard (GPG).  @xref{Top,,, gcrypt, The Libgcrypt
 Library}, for more information on Libgcrypt.
