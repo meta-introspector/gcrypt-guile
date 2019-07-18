@@ -1,5 +1,5 @@
 ;;; guile-gcrypt --- crypto tooling for guile
-;;; Copyright © 2013, 2014, 2015, 2017 Ludovic Courtès <ludo@gnu.org>
+;;; Copyright © 2013, 2014, 2015, 2017, 2019 Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;; This file is part of guile-gcrypt.
 ;;;
@@ -25,8 +25,6 @@
   #:use-module (ice-9 match)
   #:use-module (ice-9 rdelim)
   #:export (canonical-sexp?
-            error-source
-            error-string
             string->canonical-sexp
             canonical-sexp->string
             read-file-sexp
