@@ -1,5 +1,6 @@
 ;;; guile-gcrypt --- crypto tooling for guile
 ;;; Copyright © 2013, 2014, 2015 Ludovic Courtès <ludo@gnu.org>
+;;; Copyright © 2019 Mathieu Othacehe <m.othacehe@gmail.com>
 ;;;
 ;;; This file is part of guile-gcrypt.
 ;;;
@@ -21,7 +22,8 @@
   #:use-module (system foreign)
   #:use-module (ice-9 match)
   #:export (gcrypt-version
-            libgcrypt-func
+            libgcrypt->pointer
+            libgcrypt->procedure
             error-source error-string))
 
 ;;; Commentary:
@@ -31,34 +33,47 @@
 ;;;
 ;;; Code:
 
-(define libgcrypt-func
-  (let ((lib (dynamic-link %libgcrypt)))
-    (lambda (func)
-      "Return a pointer to symbol FUNC in libgcrypt."
-      (dynamic-func func lib))))
+(define (libgcrypt->pointer name)
+  "Return a pointer to symbol FUNC in libgcrypt."
+  (catch #t
+    (lambda ()
+      (dynamic-func name (dynamic-link %libgcrypt)))
+    (lambda args
+      (lambda _
+        (throw 'system-error name  "~A" (list (strerror ENOSYS))
+               (list ENOSYS))))))
+
+(define (libgcrypt->procedure return name params)
+  "Return a pointer to symbol FUNC in libgcrypt."
+  (catch #t
+    (lambda ()
+      (let ((ptr (dynamic-func name (dynamic-link %libgcrypt))))
+        ;; The #:return-errno? facility was introduced in Guile 2.0.12.
+        (pointer->procedure return ptr params
+                            #:return-errno? #t)))
+    (lambda args
+      (lambda _
+        (throw 'system-error name  "~A" (list (strerror ENOSYS))
+               (list ENOSYS))))))
 
 (define gcrypt-version
   ;; According to the manual, this function must be called before any other,
   ;; and it's not clear whether it can be called more than once.  So call it
   ;; right here from the top level.
-  (let* ((ptr     (libgcrypt-func "gcry_check_version"))
-         (proc    (pointer->procedure '* ptr '(*)))
-         (version (pointer->string (proc %null-pointer))))
+  (let ((proc (libgcrypt->procedure '* "gcry_check_version" '(*))))
     (lambda ()
       "Return the version number of libgcrypt as a string."
-      version)))
+      (pointer->string (proc %null-pointer)))))
 
 (define error-source
-  (let* ((ptr  (libgcrypt-func "gcry_strsource"))
-         (proc (pointer->procedure '* ptr (list int))))
+  (let ((proc (libgcrypt->procedure '* "gcry_strsource" (list int))))
     (lambda (err)
       "Return the error source (a string) for ERR, an error code as thrown
 along with 'gcry-error'."
       (pointer->string (proc err)))))
 
 (define error-string
-  (let* ((ptr  (libgcrypt-func "gcry_strerror"))
-         (proc (pointer->procedure '* ptr (list int))))
+  (let ((proc (libgcrypt->procedure '* "gcry_strerror" (list int))))
     (lambda (err)
       "Return the error description (a string) for ERR, an error code as
 thrown along with 'gcry-error'."

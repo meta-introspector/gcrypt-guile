@@ -1,5 +1,6 @@
 ;;; guile-gcrypt --- crypto tooling for guile
 ;;; Copyright © 2016 Christopher Allan Webber <cwebber@dustycloud.org>
+;;; Copyright © 2019 Mathieu Othacehe <m.othacehe@gmail.com>
 ;;;
 ;;; This file is part of guile-gcrypt.
 ;;;
@@ -42,11 +43,11 @@
     (format port "#<mac ~x>"
             (pointer-address (mac->pointer mac)))))
 
-
 (define %gcry-mac-open
-  (pointer->procedure int (libgcrypt-func "gcry_mac_open")
-                      `(* ,int ,unsigned-int *)))  ; gcry_mac_hd_t *HD, int ALGO,
-                                                   ; unsigned int FLAGS, gcry_ctx_t CTX
+  (libgcrypt->procedure int "gcry_mac_open"
+                        ;; gcry_mac_hd_t *HD, int ALGO,
+                        ;; unsigned int FLAGS, gcry_ctx_t CTX
+                        `(* ,int ,unsigned-int *)))
 
 (define mac-algorithms-mapping
   (alist->hashq-table
@@ -59,9 +60,8 @@
   (hashq-ref mac-algorithms-mapping sym))
 
 (define mac-algo-maclen
-  (let ((proc (pointer->procedure
-               int (libgcrypt-func "gcry_mac_get_algo_maclen")
-               `(,int))))
+  (let ((proc (libgcrypt->procedure
+               int "gcry_mac_get_algo_maclen" `(,int))))
     (lambda (sym)
       "Get expected length in bytes of mac yielded by algorithm SYM"
       (proc (mac-algo-ref sym)))))
@@ -76,8 +76,7 @@
         (throw 'gcry-error 'mac-open err))))
 
 (define %gcry-mac-setkey
-  (pointer->procedure int (libgcrypt-func "gcry_mac_setkey")
-                      `(* * ,size_t)))
+  (libgcrypt->procedure int "gcry_mac_setkey" `(* * ,size_t)))
 
 (define (mac-setkey mac key)
   "Set the KEY on <mac> object MAC
@@ -96,9 +95,9 @@ In our case, KEY is either a string or a bytevector."
         (throw 'gcry-error 'mac-setkey err))))
 
 (define mac-close
-  (let ((proc (pointer->procedure
-               void (libgcrypt-func "gcry_mac_close")
-               '(*))))  ; gcry_mac_hd_t H
+  (let ((proc (libgcrypt->procedure void
+                                    "gcry_mac_close"
+                                    '(*))))  ; gcry_mac_hd_t H
     (lambda (mac)
       "Release all resources of MAC.
 
@@ -106,9 +105,9 @@ Running this on an already closed <mac> might segfault :)"
       (proc (mac->pointer mac)))))
 
 (define mac-write
-  (let ((proc (pointer->procedure
-               int (libgcrypt-func "gcry_mac_write")
-               `(* * ,size_t))))
+  (let ((proc (libgcrypt->procedure int
+                                    "gcry_mac_write"
+                                    `(* * ,size_t))))
     (lambda (mac obj)
       "Writes string or bytevector OBJ to MAC"
       (let* ((bv (match obj
@@ -124,9 +123,9 @@ Running this on an already closed <mac> might segfault :)"
             (throw 'gcry-error 'mac-write err))))))
 
 (define mac-read
-  (let ((proc (pointer->procedure
-               int (libgcrypt-func "gcry_mac_read")
-               `(* * *))))
+  (let ((proc (libgcrypt->procedure int
+                                    "gcry_mac_read"
+                                    `(* * *))))
     (lambda (mac algorithm)
       "Get bytevector representing result of MAC's written, signed data"
       (define (int-bv* n)
@@ -148,9 +147,9 @@ Running this on an already closed <mac> might segfault :)"
 ;; rather than the gcry_error_t type.
 
 (define mac-verify
-  (let ((proc (pointer->procedure
-               int (libgcrypt-func "gcry_mac_verify")
-               `(* * ,size_t))))
+  (let ((proc (libgcrypt->procedure int
+                                    "gcry_mac_verify"
+                                    `(* * ,size_t))))
     (lambda (mac bv)
       "Verify that BV matches result calculated in MAC
 

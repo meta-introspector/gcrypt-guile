@@ -1,5 +1,6 @@
 ;;; guile-gcrypt --- crypto tooling for guile
 ;;; Copyright © 2012, 2013, 2014, 2015, 2016, 2019 Ludovic Courtès <ludo@gnu.org>
+;;; Copyright © 2019 Mathieu Othacehe <m.othacehe@gmail.com>
 ;;;
 ;;; This file is part of guile-gcrypt.
 ;;;
@@ -50,13 +51,13 @@
   (identifier-syntax 2))
 
 (define bytevector-hash
-  (let ((hash (pointer->procedure void
-                                  (libgcrypt-func "gcry_md_hash_buffer")
-                                  `(,int * * ,size_t))))
+  (let ((proc (libgcrypt->procedure void
+                                    "gcry_md_hash_buffer"
+                                    `(,int * * ,size_t))))
     (lambda (bv type size)
       "Return the hash TYPE, of SIZE bytes, of BV as a bytevector."
       (let ((digest (make-bytevector size)))
-        (hash type (bytevector->pointer digest)
+        (proc type (bytevector->pointer digest)
               (bytevector->pointer bv) (bytevector-length bv))
         digest))))
 
@@ -67,30 +68,24 @@
   (cut bytevector-hash <> GCRY_MD_SHA256 (/ 256 8)))
 
 (define open-sha256-md
-  (let ((open (pointer->procedure int
-                                  (libgcrypt-func "gcry_md_open")
-                                  `(* ,int ,unsigned-int))))
+  (let ((proc (libgcrypt->procedure int
+                                    "gcry_md_open"
+                                    `(* ,int ,unsigned-int))))
     (lambda ()
       (let* ((md  (bytevector->pointer (make-bytevector (sizeof '*))))
-             (err (open md GCRY_MD_SHA256 0)))
+             (err (proc md GCRY_MD_SHA256 0)))
         (if (zero? err)
             (dereference-pointer md)
             (throw 'gcrypt-error err))))))
 
 (define md-write
-  (pointer->procedure void
-                      (libgcrypt-func "gcry_md_write")
-                      `(* * ,size_t)))
+  (libgcrypt->procedure void "gcry_md_write" `(* * ,size_t)))
 
 (define md-read
-  (pointer->procedure '*
-                      (libgcrypt-func "gcry_md_read")
-                      `(* ,int)))
+  (libgcrypt->procedure '* "gcry_md_read" `(* ,int)))
 
 (define md-close
-  (pointer->procedure void
-                      (libgcrypt-func "gcry_md_close")
-                      '(*)))
+  (libgcrypt->procedure void "gcry_md_close" '(*)))
 
 
 (define (open-sha256-port)

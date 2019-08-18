@@ -1,5 +1,6 @@
 ;;; guile-gcrypt --- crypto tooling for guile
 ;;; Copyright © 2016 Christopher Allan Webber <cwebber@dustycloud.org>
+;;; Copyright © 2019 Mathieu Othacehe <m.othacehe@gmail.com>
 ;;;
 ;;; This file is part of guile-gcrypt.
 ;;;
@@ -33,7 +34,8 @@
 (define %gcry-very-strong-random 2)
 
 (define %gcry-randomize
-  (pointer->procedure void (libgcrypt-func "gcry_randomize")
+  (libgcrypt->procedure void
+                      "gcry_randomize"
                       `(* ,size_t ,int)))  ; buffer, length, level
 
 (define* (gen-random-bv #:optional (bv-length 50)
@@ -44,8 +46,8 @@
     bv))
 
 (define %gcry-create-nonce
-  (pointer->procedure void (libgcrypt-func "gcry_create_nonce")
-                      `(* ,size_t)))  ; buffer, length
+  (libgcrypt->procedure void "gcry_create_nonce"
+                        `(* ,size_t)))  ; buffer, length
 
 
 (define* (gen-random-nonce #:optional (bv-length 50))
