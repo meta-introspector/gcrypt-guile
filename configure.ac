@@ -5,6 +5,7 @@ AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 
 AM_INIT_AUTOMAKE([-Wall -Werror gnu])
+AM_SILENT_RULES([yes])
 
 dnl We require guile.m4, from Guile.  Make sure it's available.
 m4_pattern_forbid([^GUILE_P])
