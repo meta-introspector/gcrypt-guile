@@ -122,34 +122,76 @@ thrown along with @code{gcry-error}.
 
 The @code{(gcrypt hash)} module exports @dfn{cryptographic hash
 functions} (@pxref{Hashing,,, gcrypt, The Libgcrypt Library}).
-Currently only a small subset of hash functions is exposed by
-Guile-Gcrypt, listed here.
+The procedures below all take a @dfn{hash algorithm} as an argument;
+these are constructed using the @code{hash-algorithm} macro, as in this
+example:
 
-@deffn {Scheme Procedure} sha1 @var{bv}
+@example
+(hash-algorithm sha1)
+@end example
+
+Alternately, you can look up a hash algorithm by name using the
+@code{lookup-hash-algorithm} procedure:
+
+@example
+(lookup-hash-algorithm 'blake2b-512)
+@end example
+
+The following macros and procedures allow you to deal with algorithms.
+
+@deffn {Scheme Syntax} hash-algorithm @var{id}
+Return the hash algorithm for @var{id}, a lower-case identifier such as
+@code{sha1}, @code{whirlpool}, or @code{blake2b-512}.  A syntax error
+is raised when @var{id} doesn't match any know algorithm.
+@end deffn
+
+@deffn {Scheme Procedure} lookup-hash-algorithm @var{id}
+Return the hash algorithm corresponding to @var{id}, a symbol, or
+@code{#f} if @var{id} does not denote a known hash algorithm.
+@end deffn
+
+@deffn {Scheme Procedure} hash-size @var{algorithm}
+Return the size in bytes of hashes produced by @var{algorithm}.
+@end deffn
+
+The procedures below offer several ways to compute a hash.
+
+@deffn {Scheme Procedure} bytevector-hash @var{bv} @var{algorithm}
+@deffnx {Scheme Procedure} sha1 @var{bv}
 @deffnx {Scheme Procedure} sha256 @var{bv}
-Return the SHA1 or SHA256 hash of the data in @var{bv}, a bytevector.
-The returned hash is itself represented as a bytevector
-(@pxref{Bytevectors,,, guile, The Guile Reference Manual}).
+Return the hash @var{algorithm} of @var{bv} as a bytevector.
 @end deffn
 
-@deffn {Scheme Procedure} open-sha256-port
-Return two values: an output port, and a thunk.  When the thunk is called,
-it returns the SHA256 hash (a bytevector) of all the data written to the
-output port.
+@deffn {Scheme Procedure} open-hash-port @var{algorithm}
+@deffnx {Scheme Procedure} open-sha256-port
+Return two values: an output port, and a thunk.  When the thunk is
+called, it returns the hash (a bytevector) for @var{algorithm} of all
+the data written to the output port.
 @end deffn
 
-@deffn {Scheme Procedure} port-sha256 @var{port}
-Return the SHA256 hash (a bytevector) of all the data drained from
-@var{port}.
+@deffn {Scheme Procedure} port-hash @var{algorithm}
+@deffnx {Scheme Procedure} port-sha256
+Return the @var{algorithm} hash (a bytevector) of all the data drained
+from @var{port}.
 @end deffn
 
-@deffn {Scheme Procedure} file-sha256 @var{file}
-Return the SHA256 hash (a bytevector) of @var{file}.
+@deffn {Scheme Procedure} file-hash @var{algorithm} @var{file}
+@deffnx {Scheme Procedure} file-sha256 @var{file}
+Return the @var{algorithm} hash (a bytevector) of @var{file}.
 @end deffn
 
-@deffn {Scheme Procedure} open-sha256-input-port @var{port}
-Return an input port that wraps @var{port} and a thunk to get the hash of all the
-data read from @var{port}.  The thunk always returns the same value.
+@deffn {Scheme Procedure} open-hash-port @var{algorithm} @var{port}
+@deffnx {Scheme Procedure} open-sha256-port @var{port}
+Return an input port that wraps @var{port} and a thunk to get the hash
+of all the data read from @var{port}.  The thunk always returns the same
+value.
+@end deffn
+
+@deffn {Scheme Procedure} open-hash-input-port @var{algorithm} @var{port}
+@deffnx {Scheme Procedure} open-sha256-input-port @var{port}
+Return an input port that wraps @var{port} and a thunk to get the hash
+of all the data read from @var{port}.  The thunk always returns the same
+value.
 @end deffn
 
 @node Message Authentication Codes
