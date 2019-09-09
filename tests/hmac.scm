@@ -29,9 +29,10 @@
   (lookup-mac-algorithm 'sha3-256))
 
 (test-equal "mac-size"
-  (list 32 64 64)
+  (list 32 28 64 64)
   (map mac-size
        (list (mac-algorithm sha256)
+             (mac-algorithm sha224)
              (mac-algorithm sha512)
              (mac-algorithm sha3-512))))
 

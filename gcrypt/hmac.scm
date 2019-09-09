@@ -55,9 +55,24 @@
   lookup-mac-algorithm
   mac-size
 
+  ;; GCRY_MAC_HMAC_*
   (sha256 101 32)
+  (sha224 102 28)
   (sha512 103 64)
+  (sha384 104 48)
+  (sha1 105 20)
+  (md5 106 16)
+  (md4 107 16)
+  (rmd160 108 20)
+  (tiger1 109 24)
+  (whirlpool 110 64)
+  (gostr3411-94 111 32)
+  (stribog256 112 32)
+  (stribog512 113 64)
+  ;; (md2 114 0)
+  (sha3-224 115 28)
   (sha3-256 116 32)
+  (sha3-384 117 48)
   (sha3-512 118 64))
 
 (define mac-algo-maclen
