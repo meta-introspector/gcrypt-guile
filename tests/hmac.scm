@@ -1,5 +1,6 @@
 ;;; guile-gcrypt --- crypto tooling for guile
 ;;; Copyright © 2016 Christopher Allan Webber <cwebber@dustycloud.org>
+;;; Copyright © 2019 Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;; This file is part of guile-gcrypt.
 ;;;
@@ -23,22 +24,42 @@
 
 (test-begin "hmac")
 
+(test-equal "lookup-mac-algorithm"
+  (mac-algorithm sha3-256)
+  (lookup-mac-algorithm 'sha3-256))
+
+(test-equal "mac-size"
+  (list 32 64 64)
+  (map mac-size
+       (list (mac-algorithm sha256)
+             (mac-algorithm sha512)
+             (mac-algorithm sha3-512))))
+
 (define test-key (gen-signing-key))
 
-(let ((sig (sign-data test-key "monkey party")))
+(let ((sig (sign-data test-key "monkey party"
+                      #:algorithm 'sha256)))    ;calling convention for 0.1.0
   ;; Should be a bytevector
   (test-assert (bytevector? sig))
   ;; Correct sig succeeds
-  (test-assert (verify-sig test-key "monkey party" sig))
+  (test-assert (verify-sig test-key "monkey party" sig
+                           #:algorithm 'sha256))
   ;; Incorrect data fails
-  (test-assert (not (verify-sig test-key "something else" sig)))
+  (test-assert (not (verify-sig test-key "something else" sig
+                                #:algorithm (mac-algorithm sha256))))
   ;; Fake signature fails
   (test-assert (not (verify-sig test-key "monkey party"
-                                (string->utf8 "fake sig"))))
+                                (string->utf8 "fake sig")
+                                #:algorithm (mac-algorithm sha256))))
+  ;; Wrong algorithm fails
+  (test-assert (not (verify-sig test-key "monkey party" sig
+                                #:algorithm (mac-algorithm sha512))))
   ;; Should equal a re-run of itself
-  (test-equal sig (sign-data test-key "monkey party"))
+  (test-equal sig (sign-data test-key "monkey party"
+                             #:algorithm (mac-algorithm sha256)))
   ;; Shouldn't equal something different
-  (test-assert (not (equal? sig (sign-data test-key "cookie party")))))
+  (test-assert (not (equal? sig (sign-data test-key "cookie party"
+                                           #:algorithm (mac-algorithm sha256))))))
 
 ;; Now with base64 encoding
 (let ((sig (sign-data-base64 test-key "monkey party")))

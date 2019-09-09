@@ -201,6 +201,36 @@ The @code{(gcrypt hmac)} module provides procedures to deal with
 @dfn{message authentication codes} or @dfn{MACs} (@pxref{Message
 Authentication Codes,,, gcrypt, The Libgcrypt Library}).
 
+Similar to how hash functions are handled (@pxref{Hash Functions}), the
+@code{mac-algorithm} macro can be used to construct a MAC algorithm:
+
+@example
+(mac-algorithm sha3-512)
+@end example
+
+The following macros and procedures allow you to deal with algorithms.
+
+@deffn {Scheme Syntax} mac-algorithm @var{id}
+Return the MAC algorithm for @var{id}, a lower-case identifier such as
+@code{sha256}.  A syntax error is raised when @var{id} doesn't match any
+know algorithm.
+@end deffn
+
+@deffn {Scheme Procedure} lookup-mac-algorithm @var{id}
+Return the MAC algorithm corresponding to @var{id}, a symbol, or
+@code{#f} if @var{id} does not denote a known MAC algorithm.
+@end deffn
+
+@deffn {Scheme Procedure} mac-size @var{algorithm}
+Return the size in bytes of MACs produced by @var{algorithm}.
+@end deffn
+
+@c TODO
+@quotation Warning
+This section is incomplete.
+@end quotation
+
+
 @node Public-Key Cryptography
 @chapter Public-Key Cryptography
 
