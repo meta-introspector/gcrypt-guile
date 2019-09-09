@@ -53,7 +53,7 @@ value in O(1)."
               (max    (apply max (syntax->datum #'(index ...))))
               (array  (let loop ((i max)
                                  (result '()))
-                        (if (< i (- min 1))
+                        (if (< i min)
                             result
                             (loop (- i 1)
                                   (cons (or (assv-ref values i) -1)
@@ -63,6 +63,6 @@ value in O(1)."
              (let ((values '#(#,@array)))
                (lambda (integer)
                  docstring
-                 (and (<= integer #,max) (> integer #,min)
-                      (let ((result (vector-ref values integer)))
+                 (and (<= integer #,max) (>= integer #,min)
+                      (let ((result (vector-ref values (- integer #,min))))
                         (and (> result 0) result)))))))))))
