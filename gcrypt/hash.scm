@@ -20,6 +20,7 @@
 (define-module (gcrypt hash)
   #:use-module (gcrypt common)
   #:use-module (gcrypt utils)
+  #:use-module (gcrypt internal)
   #:use-module (rnrs bytevectors)
   #:use-module (ice-9 binary-ports)
   #:use-module (system foreign)
@@ -52,46 +53,6 @@
 ;;;
 ;;; Hash.
 ;;;
-
-(define-syntax-rule (define-enumerate-type name->integer symbol->integer
-                      (name id) ...)
-  (begin
-    (define-syntax name->integer
-      (syntax-rules (name ...)
-        "Return hash algorithm NAME."
-        ((_ name) id) ...))
-
-    (define symbol->integer
-      (let ((alist '((name . id) ...)))
-        (lambda (symbol)
-          "Look up SYMBOL and return the corresponding integer or #f if it
-could not be found."
-          (assq-ref alist symbol))))))
-
-(define-syntax define-lookup-procedure
-  (lambda (s)
-    "Define LOOKUP as a procedure that maps an integer to its corresponding
-value in O(1)."
-    (syntax-case s ()
-      ((_ lookup docstring (index value) ...)
-       (let* ((values (syntax->datum #'((index . value) ...)))
-              (min    (apply min (syntax->datum #'(index ...))))
-              (max    (apply max (syntax->datum #'(index ...))))
-              (array  (let loop ((i max)
-                                 (result '()))
-                        (if (< i (- min 1))
-                            result
-                            (loop (- i 1)
-                                  (cons (or (assv-ref values i) -1)
-                                        result))))))
-         #`(define lookup
-             ;; Allocate a big sparse vector.
-             (let ((values '#(#,@array)))
-               (lambda (integer)
-                 docstring
-                 (and (<= integer #,max) (> integer #,min)
-                      (let ((result (vector-ref values integer)))
-                        (and (> result 0) result)))))))))))
 
 (define-syntax-rule (define-hash-algorithms name->integer
                       symbol->integer hash-size

@@ -3,7 +3,7 @@
 ## parts of this automake recipe borrowed from:
 
 ## GNU Guix --- Functional package management for GNU
-## Copyright © 2012, 2013, 2014, 2015 Ludovic Courtès <ludo@gnu.org>
+## Copyright © 2012, 2013, 2014, 2015, 2019 Ludovic Courtès <ludo@gnu.org>
 ## Copyright © 2013 Andreas Enge <andreas@enge.fr>
 ## Copyright © 2015 Alex Kost <alezost@gmail.com>
 
@@ -44,15 +44,16 @@ SUFFIXES = .scm .go
 moddir=$(prefix)/share/guile/site/$(GUILE_EFFECTIVE_VERSION)
 godir = $(libdir)/guile/$(GUILE_EFFECTIVE_VERSION)/site-ccache
 
-SOURCES =  \
-	gcrypt/base16.scm					\
-	gcrypt/base64.scm					\
-	gcrypt/common.scm					\
-	gcrypt/hash.scm						\
-	gcrypt/hmac.scm						\
-	gcrypt/package-config.scm				\
-	gcrypt/pk-crypto.scm					\
-	gcrypt/random.scm					\
+SOURCES =					\
+	gcrypt/base16.scm			\
+	gcrypt/base64.scm			\
+	gcrypt/common.scm			\
+	gcrypt/hash.scm				\
+	gcrypt/hmac.scm				\
+	gcrypt/internal.scm			\
+	gcrypt/package-config.scm		\
+	gcrypt/pk-crypto.scm			\
+	gcrypt/random.scm			\
 	gcrypt/utils.scm
 
 TESTS =							\
