@@ -18,7 +18,6 @@
 ;;; along with guile-gcrypt.  If not, see <http://www.gnu.org/licenses/>.
 
 (define-module (gcrypt hash)
-  #:use-module (gcrypt common)
   #:use-module (gcrypt utils)
   #:use-module (gcrypt internal)
   #:use-module (rnrs bytevectors)

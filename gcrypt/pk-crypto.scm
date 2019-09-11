@@ -19,8 +19,8 @@
 
 (define-module (gcrypt pk-crypto)
   #:use-module (gcrypt base16)
+  #:use-module (gcrypt internal)
   #:use-module (gcrypt common)
-
   #:use-module (system foreign)
   #:use-module (rnrs bytevectors)
   #:use-module (ice-9 match)

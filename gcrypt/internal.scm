@@ -17,7 +17,12 @@
 ;;; along with guile-gcrypt.  If not, see <http://www.gnu.org/licenses/>.
 
 (define-module (gcrypt internal)
-  #:export (define-enumerate-type
+  #:use-module (gcrypt package-config)
+  #:use-module (system foreign)
+  #:export (libgcrypt->pointer
+            libgcrypt->procedure
+
+            define-enumerate-type
             define-lookup-procedure))
 
 ;;; Code:
@@ -26,6 +31,29 @@
 ;;; change anytime; you should not rely on it.
 ;;;
 ;;; Comment:
+
+(define (libgcrypt->pointer name)
+  "Return a pointer to symbol FUNC in libgcrypt."
+  (catch #t
+    (lambda ()
+      (dynamic-func name (dynamic-link %libgcrypt)))
+    (lambda args
+      (lambda _
+        (throw 'system-error name  "~A" (list (strerror ENOSYS))
+               (list ENOSYS))))))
+
+(define (libgcrypt->procedure return name params)
+  "Return a pointer to symbol FUNC in libgcrypt."
+  (catch #t
+    (lambda ()
+      (let ((ptr (dynamic-func name (dynamic-link %libgcrypt))))
+        ;; The #:return-errno? facility was introduced in Guile 2.0.12.
+        (pointer->procedure return ptr params
+                            #:return-errno? #t)))
+    (lambda args
+      (lambda _
+        (throw 'system-error name  "~A" (list (strerror ENOSYS))
+               (list ENOSYS))))))
 
 (define-syntax-rule (define-enumerate-type name->integer symbol->integer
                       (name id) ...)

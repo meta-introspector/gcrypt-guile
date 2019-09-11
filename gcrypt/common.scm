@@ -1,5 +1,5 @@
 ;;; guile-gcrypt --- crypto tooling for guile
-;;; Copyright © 2013, 2014, 2015 Ludovic Courtès <ludo@gnu.org>
+;;; Copyright © 2013, 2014, 2015, 2019 Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright © 2019 Mathieu Othacehe <m.othacehe@gmail.com>
 ;;;
 ;;; This file is part of guile-gcrypt.
@@ -18,12 +18,10 @@
 ;;; along with guile-gcrypt.  If not, see <http://www.gnu.org/licenses/>.
 
 (define-module (gcrypt common)
-  #:use-module (gcrypt package-config)
+  #:use-module (gcrypt internal)
   #:use-module (system foreign)
   #:use-module (ice-9 match)
   #:export (gcrypt-version
-            libgcrypt->pointer
-            libgcrypt->procedure
             error-source error-string))
 
 ;;; Commentary:
@@ -32,29 +30,6 @@
 ;;; initializes Libgcrypt as a side effect.
 ;;;
 ;;; Code:
-
-(define (libgcrypt->pointer name)
-  "Return a pointer to symbol FUNC in libgcrypt."
-  (catch #t
-    (lambda ()
-      (dynamic-func name (dynamic-link %libgcrypt)))
-    (lambda args
-      (lambda _
-        (throw 'system-error name  "~A" (list (strerror ENOSYS))
-               (list ENOSYS))))))
-
-(define (libgcrypt->procedure return name params)
-  "Return a pointer to symbol FUNC in libgcrypt."
-  (catch #t
-    (lambda ()
-      (let ((ptr (dynamic-func name (dynamic-link %libgcrypt))))
-        ;; The #:return-errno? facility was introduced in Guile 2.0.12.
-        (pointer->procedure return ptr params
-                            #:return-errno? #t)))
-    (lambda args
-      (lambda _
-        (throw 'system-error name  "~A" (list (strerror ENOSYS))
-               (list ENOSYS))))))
 
 (define gcrypt-version
   ;; According to the manual, this function must be called before any other,

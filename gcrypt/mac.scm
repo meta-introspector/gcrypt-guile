@@ -22,7 +22,6 @@
   #:use-module (ice-9 format)
   #:use-module (ice-9 match)
   #:use-module (gcrypt base64)
-  #:use-module (gcrypt common)
   #:use-module (gcrypt internal)
   #:use-module (gcrypt random)
   #:use-module (rnrs bytevectors)

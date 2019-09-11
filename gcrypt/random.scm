@@ -18,7 +18,7 @@
 ;;; along with guile-gcrypt.  If not, see <http://www.gnu.org/licenses/>.
 
 (define-module (gcrypt random)
-  #:use-module (gcrypt common)
+  #:use-module (gcrypt internal)
   #:use-module (gcrypt base64)
   #:use-module (rnrs bytevectors)
   #:use-module (system foreign)
