@@ -56,24 +56,24 @@
   mac-size
 
   ;; GCRY_MAC_HMAC_*
-  (sha256 101 32)
-  (sha224 102 28)
-  (sha512 103 64)
-  (sha384 104 48)
-  (sha1 105 20)
-  (md5 106 16)
-  (md4 107 16)
-  (rmd160 108 20)
-  (tiger1 109 24)
-  (whirlpool 110 64)
-  (gostr3411-94 111 32)
-  (stribog256 112 32)
-  (stribog512 113 64)
-  ;; (md2 114 0)
-  (sha3-224 115 28)
-  (sha3-256 116 32)
-  (sha3-384 117 48)
-  (sha3-512 118 64))
+  (hmac-sha256 101 32)
+  (hmac-sha224 102 28)
+  (hmac-sha512 103 64)
+  (hmac-sha384 104 48)
+  (hmac-sha1 105 20)
+  (hmac-md5 106 16)
+  (hmac-md4 107 16)
+  (hmac-rmd160 108 20)
+  (hmac-tiger1 109 24)
+  (hmac-whirlpool 110 64)
+  (hmac-gostr3411-94 111 32)
+  (hmac-stribog256 112 32)
+  (hmac-stribog512 113 64)
+  ;; (hmac-md2 114 0)
+  (hmac-sha3-224 115 28)
+  (hmac-sha3-256 116 32)
+  (hmac-sha3-384 117 48)
+  (hmac-sha3-512 118 64))
 
 (define mac-algo-maclen
   ;; This procedure was used to double-check the hash sizes above.  (We
@@ -195,7 +195,7 @@ BV should be a bytevector with previously calculated data."
             (values #f err))))))
 
 (define* (sign-data key data #:key
-                    (algorithm (mac-algorithm sha512)))
+                    (algorithm (mac-algorithm hmac-sha512)))
   "Signs DATA with KEY for ALGORITHM.  Returns a bytevector."
   (let ((mac (mac-open algorithm)))
     (mac-setkey mac key)
@@ -205,14 +205,14 @@ BV should be a bytevector with previously calculated data."
       result)))
 
 (define* (sign-data-base64 key data #:key
-                           (algorithm (mac-algorithm sha512)))
+                           (algorithm (mac-algorithm hmac-sha512)))
   "Like sign-data, but conveniently encodes to base64."
   (base64-encode (sign-data key data #:algorithm algorithm)))
 
 
 ;; @@: Shouldn't this be "valid-sig?"
 (define* (verify-sig key data sig
-                     #:key (algorithm (mac-algorithm sha512)))
+                     #:key (algorithm (mac-algorithm hmac-sha512)))
   "Verify that DATA with KEY matches previous signature SIG for ALGORITHM."
   (let ((mac (mac-open algorithm)))
     (mac-setkey mac key)
@@ -222,7 +222,7 @@ BV should be a bytevector with previously calculated data."
       result)))
 
 (define* (verify-sig-base64 key data b64-sig
-                            #:key (algorithm (mac-algorithm sha512)))
+                            #:key (algorithm (mac-algorithm hmac-sha512)))
   (verify-sig key data
                (base64-decode b64-sig)
                #:algorithm algorithm))

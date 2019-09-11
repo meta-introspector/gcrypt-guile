@@ -212,7 +212,7 @@ Similar to how hash functions are handled (@pxref{Hash Functions}), the
 @code{mac-algorithm} macro can be used to construct a MAC algorithm:
 
 @example
-(mac-algorithm sha3-512)
+(mac-algorithm hmac-sha3-512)
 @end example
 
 The following macros and procedures allow you to deal with algorithms.

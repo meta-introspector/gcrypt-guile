@@ -31,29 +31,32 @@
 ;;;
 ;;; Commentary:
 
+(define (symbol->algorithm symbol)
+  "Convert SYMBOL (e.g., 'sha256) to the corresponding MAC algorithm."
+  ;; Note: In 0.1.0, only a few hmac algorithms were supported, without the
+  ;; 'hmac-' prefix.
+  (mac:lookup-mac-algorithm (symbol-append 'hmac- symbol)))
+
 (define* (sign-data key data #:key (algorithm 'sha512))
   "Signs DATA with KEY for ALGORITHM.  Returns a bytevector."
   (mac:sign-data key data
-                 #:algorithm
-                 (mac:lookup-mac-algorithm algorithm)))
+                 #:algorithm (symbol->algorithm algorithm)))
 
 (define* (sign-data-base64 key data #:key (algorithm 'sha512))
   "Signs DATA with KEY for ALGORITHM.  Returns a bytevector."
   (mac:sign-data-base64 key data
                         #:algorithm
-                        (mac:lookup-mac-algorithm algorithm)))
+                        (symbol->algorithm algorithm)))
 
 (define* (verify-sig key data sig #:key (algorithm 'sha512))
   "Verify that DATA with KEY matches previous signature SIG for ALGORITHM."
   (mac:verify-sig key data sig
-                  #:algorithm
-                  (mac:lookup-mac-algorithm algorithm)))
+                  #:algorithm (symbol->algorithm algorithm)))
 
 (define* (verify-sig-base64 key data sig #:key (algorithm 'sha512))
   "Verify that DATA with KEY matches previous signature SIG for ALGORITHM."
   (mac:verify-sig-base64 key data sig
-                         #:algorithm
-                         (mac:lookup-mac-algorithm algorithm)))
+                         #:algorithm (symbol->algorithm algorithm)))
 
 (define gen-signing-key
   mac:gen-signing-key)

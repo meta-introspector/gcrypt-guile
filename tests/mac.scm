@@ -25,42 +25,43 @@
 (test-begin "mac")
 
 (test-equal "lookup-mac-algorithm"
-  (mac-algorithm sha3-256)
-  (lookup-mac-algorithm 'sha3-256))
+  (mac-algorithm hmac-sha3-256)
+  (lookup-mac-algorithm 'hmac-sha3-256))
 
 (test-equal "mac-size"
   (list 32 28 64 64)
   (map mac-size
-       (list (mac-algorithm sha256)
-             (mac-algorithm sha224)
-             (mac-algorithm sha512)
-             (mac-algorithm sha3-512))))
+       (list (mac-algorithm hmac-sha256)
+             (mac-algorithm hmac-sha224)
+             (mac-algorithm hmac-sha512)
+             (mac-algorithm hmac-sha3-512))))
 
 (define test-key (gen-signing-key))
 
 (let ((sig (sign-data test-key "monkey party"
-                      #:algorithm (mac-algorithm sha256))))
+                      #:algorithm (mac-algorithm hmac-sha256))))
   ;; Should be a bytevector
   (test-assert (bytevector? sig))
   ;; Correct sig succeeds
   (test-assert (verify-sig test-key "monkey party" sig
-                           #:algorithm (mac-algorithm sha256)))
+                           #:algorithm (mac-algorithm hmac-sha256)))
   ;; Incorrect data fails
   (test-assert (not (verify-sig test-key "something else" sig
-                                #:algorithm (mac-algorithm sha256))))
+                                #:algorithm (mac-algorithm hmac-sha256))))
   ;; Fake signature fails
   (test-assert (not (verify-sig test-key "monkey party"
                                 (string->utf8 "fake sig")
-                                #:algorithm (mac-algorithm sha256))))
+                                #:algorithm (mac-algorithm hmac-sha256))))
   ;; Wrong algorithm fails
   (test-assert (not (verify-sig test-key "monkey party" sig
-                                #:algorithm (mac-algorithm sha512))))
+                                #:algorithm (mac-algorithm hmac-sha512))))
   ;; Should equal a re-run of itself
   (test-equal sig (sign-data test-key "monkey party"
-                             #:algorithm (mac-algorithm sha256)))
+                             #:algorithm (mac-algorithm hmac-sha256)))
   ;; Shouldn't equal something different
   (test-assert (not (equal? sig (sign-data test-key "cookie party"
-                                           #:algorithm (mac-algorithm sha256))))))
+                                           #:algorithm
+                                           (mac-algorithm hmac-sha256))))))
 
 ;; Now with base64 encoding
 (let ((sig (sign-data-base64 test-key "monkey party")))
