@@ -1,1 +1,19 @@
-No news is good news!
+                                                              -*- org -*-
+#+TITLE: Guile-Gcrypt NEWS – history of user-visible changes
+#+STARTUP: content hidestars
+
+Copyright © 2019 Ludovic Courtès <ludo@gnu.org>
+
+  Copying and distribution of this file, with or without modification,
+  are permitted in any medium without royalty provided the copyright
+  notice and this notice are preserved.
+
+Please send Guix bug reports to <https://notabug.org/cwebber/guile-gcrypt>.
+
+* Changes in 0.2.0 (since 0.1.0)
+
+** (gcrypt hash) now exposes all the algorithms supported by Libgcrypt
+** (guix mac) now exposes all the MAC algorithms, not just HMAC
+** (guix hmac) is deprecated in favor of (guix mac)
+** Guile-Gcrypt can now be compiled with Guile 2.9 (future 3.0)
+** Guile-Gcrypt can now be cross-compiled
