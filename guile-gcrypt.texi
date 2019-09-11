@@ -55,7 +55,7 @@ visit @uref{https://notabug.org/cwebber/guile-gcrypt} or email
 @menu
 * Introduction::                      Getting started.
 * Hash Functions::                    SHA1 and its friends.
-* Message Authentication Codes::      HMAC.
+* Message Authentication Codes::      MACs.
 * Public-Key Cryptography::           Signing and encrypting.
 * Random Numbers::                    Generating random numbers.
 * Miscellany::                        Bonuses!
@@ -197,9 +197,16 @@ value.
 @node Message Authentication Codes
 @chapter Message Authentication Codes
 
-The @code{(gcrypt hmac)} module provides procedures to deal with
+The @code{(gcrypt mac)} module provides procedures to deal with
 @dfn{message authentication codes} or @dfn{MACs} (@pxref{Message
 Authentication Codes,,, gcrypt, The Libgcrypt Library}).
+
+@quotation Note
+Guile-Gcrypt 0.1.0 provided this functionality in the @code{(gcrypt
+hmac)} module.  This module is still provided for backward
+compatibility, with the same interface as before, but it is deprecated
+and will be removed in future versions.
+@end quotation
 
 Similar to how hash functions are handled (@pxref{Hash Functions}), the
 @code{mac-algorithm} macro can be used to construct a MAC algorithm:
