@@ -63,6 +63,20 @@
                                            #:algorithm
                                            (mac-algorithm hmac-sha256))))))
 
+;; Now with a CMAC.
+(let* ((key (gen-signing-key 16))
+       (sig (sign-data key "monkey party"
+                       #:algorithm (mac-algorithm cmac-aes))))
+  ;; Should be a bytevector
+  (test-assert (bytevector? sig))
+  ;; Correct sig succeeds
+  (test-assert (verify-sig key "monkey party" sig
+                           #:algorithm (mac-algorithm cmac-aes)))
+  ;; Fake signature fails
+  (test-assert (not (verify-sig key "monkey party"
+                                (string->utf8 "fake sig")
+                                #:algorithm (mac-algorithm cmac-aes)))))
+
 ;; Now with base64 encoding
 (let ((sig (sign-data-base64 test-key "monkey party")))
   ;; Should be a string

@@ -36,8 +36,6 @@
             verify-sig verify-sig-base64
             gen-signing-key))
 
-;;; HMAC
-;;; ====
 
 (define-syntax-rule (define-mac-algorithms name->integer
                       symbol->integer mac-size
@@ -55,7 +53,8 @@
   lookup-mac-algorithm
   mac-size
 
-  ;; GCRY_MAC_HMAC_*
+  ;; GCRY_MAC_*
+
   (hmac-sha256 101 32)
   (hmac-sha224 102 28)
   (hmac-sha512 103 64)
@@ -73,7 +72,32 @@
   (hmac-sha3-224 115 28)
   (hmac-sha3-256 116 32)
   (hmac-sha3-384 117 48)
-  (hmac-sha3-512 118 64))
+  (hmac-sha3-512 118 64)
+
+  (cmac-aes 201 16)
+  (cmac-3des 202 8)
+  (cmac-camellia 203 16)
+  (cmac-cast5 204 8)
+  (cmac-blowfish 205 8)
+  (cmac-twofish 206 16)
+  (cmac-serpent 207 16)
+  (cmac-seed 208 16)
+  (cmac-rfc2268 209 8)
+  (cmac-idea 210 8)
+  (cmac-gost28147 211 8)
+
+  (gmac-aes 401 16)
+  (gmac-camellia 402 16)
+  (gmac-twofish 403 16)
+  (gmac-serpent 404 16)
+  (gmac-seed 405 16)
+
+  (poly1305 501 16)
+  (poly1305-aes 502 16)
+  (poly1305-camellia 503 16)
+  (poly1305-twofish 504 16)
+  (poly1305-serpent 505 16)
+  (poly1305-seed 506 16))
 
 (define mac-algo-maclen
   ;; This procedure was used to double-check the hash sizes above.  (We
