@@ -50,13 +50,13 @@
 
 (define* (verify-sig key data sig #:key (algorithm 'sha512))
   "Verify that DATA with KEY matches previous signature SIG for ALGORITHM."
-  (mac:verify-sig key data sig
-                  #:algorithm (symbol->algorithm algorithm)))
+  (mac:valid-signature? key data sig
+                        #:algorithm (symbol->algorithm algorithm)))
 
 (define* (verify-sig-base64 key data sig #:key (algorithm 'sha512))
   "Verify that DATA with KEY matches previous signature SIG for ALGORITHM."
-  (mac:verify-sig-base64 key data sig
-                         #:algorithm (symbol->algorithm algorithm)))
+  (mac:valid-base64-signature? key data sig
+                               #:algorithm (symbol->algorithm algorithm)))
 
 (define gen-signing-key
-  mac:gen-signing-key)
+  mac:generate-signing-key)

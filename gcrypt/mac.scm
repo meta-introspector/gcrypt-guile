@@ -33,9 +33,9 @@
 
             sign-data
             sign-data-base64
-            verify-sig verify-sig-base64
-            gen-signing-key))
-
+            valid-signature?
+            valid-base64-signature?
+            generate-signing-key))
 
 (define-syntax-rule (define-mac-algorithms name->integer
                       symbol->integer mac-size
@@ -234,9 +234,8 @@ BV should be a bytevector with previously calculated data."
   (base64-encode (sign-data key data #:algorithm algorithm)))
 
 
-;; @@: Shouldn't this be "valid-sig?"
-(define* (verify-sig key data sig
-                     #:key (algorithm (mac-algorithm hmac-sha512)))
+(define* (valid-signature? key data sig
+                           #:key (algorithm (mac-algorithm hmac-sha512)))
   "Verify that DATA with KEY matches previous signature SIG for ALGORITHM."
   (let ((mac (mac-open algorithm)))
     (mac-setkey mac key)
@@ -245,13 +244,14 @@ BV should be a bytevector with previously calculated data."
       (mac-close mac)
       result)))
 
-(define* (verify-sig-base64 key data b64-sig
-                            #:key (algorithm (mac-algorithm hmac-sha512)))
-  (verify-sig key data
-               (base64-decode b64-sig)
-               #:algorithm algorithm))
+(define* (valid-base64-signature? key data b64-sig
+                                  #:key
+                                  (algorithm (mac-algorithm hmac-sha512)))
+  (valid-signature? key data
+                    (base64-decode b64-sig)
+                    #:algorithm algorithm))
 
-(define* (gen-signing-key #:optional (key-length 128))
+(define* (generate-signing-key #:optional (key-length 128))
   "Generate a signing key (a bytevector).
 
 KEY-LENGTH is the length, in bytes, of the key.  The default is 128.

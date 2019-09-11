@@ -36,25 +36,28 @@
              (mac-algorithm hmac-sha512)
              (mac-algorithm hmac-sha3-512))))
 
-(define test-key (gen-signing-key))
+(define test-key (generate-signing-key))
 
 (let ((sig (sign-data test-key "monkey party"
                       #:algorithm (mac-algorithm hmac-sha256))))
   ;; Should be a bytevector
   (test-assert (bytevector? sig))
   ;; Correct sig succeeds
-  (test-assert (verify-sig test-key "monkey party" sig
-                           #:algorithm (mac-algorithm hmac-sha256)))
+  (test-assert (valid-signature? test-key "monkey party" sig
+                                 #:algorithm (mac-algorithm hmac-sha256)))
   ;; Incorrect data fails
-  (test-assert (not (verify-sig test-key "something else" sig
-                                #:algorithm (mac-algorithm hmac-sha256))))
+  (test-assert (not (valid-signature? test-key "something else" sig
+                                      #:algorithm
+                                      (mac-algorithm hmac-sha256))))
   ;; Fake signature fails
-  (test-assert (not (verify-sig test-key "monkey party"
-                                (string->utf8 "fake sig")
-                                #:algorithm (mac-algorithm hmac-sha256))))
+  (test-assert (not (valid-signature? test-key "monkey party"
+                                      (string->utf8 "fake sig")
+                                      #:algorithm
+                                      (mac-algorithm hmac-sha256))))
   ;; Wrong algorithm fails
-  (test-assert (not (verify-sig test-key "monkey party" sig
-                                #:algorithm (mac-algorithm hmac-sha512))))
+  (test-assert (not (valid-signature? test-key "monkey party" sig
+                                      #:algorithm
+                                      (mac-algorithm hmac-sha512))))
   ;; Should equal a re-run of itself
   (test-equal sig (sign-data test-key "monkey party"
                              #:algorithm (mac-algorithm hmac-sha256)))
@@ -64,30 +67,30 @@
                                            (mac-algorithm hmac-sha256))))))
 
 ;; Now with a CMAC.
-(let* ((key (gen-signing-key 16))
+(let* ((key (generate-signing-key 16))
        (sig (sign-data key "monkey party"
                        #:algorithm (mac-algorithm cmac-aes))))
   ;; Should be a bytevector
   (test-assert (bytevector? sig))
   ;; Correct sig succeeds
-  (test-assert (verify-sig key "monkey party" sig
-                           #:algorithm (mac-algorithm cmac-aes)))
+  (test-assert (valid-signature? key "monkey party" sig
+                                 #:algorithm (mac-algorithm cmac-aes)))
   ;; Fake signature fails
-  (test-assert (not (verify-sig key "monkey party"
-                                (string->utf8 "fake sig")
-                                #:algorithm (mac-algorithm cmac-aes)))))
+  (test-assert (not (valid-signature? key "monkey party"
+                                      (string->utf8 "fake sig")
+                                      #:algorithm (mac-algorithm cmac-aes)))))
 
 ;; Now with base64 encoding
 (let ((sig (sign-data-base64 test-key "monkey party")))
   ;; Should be a string
   (test-assert (string? sig))
   ;; Correct sig succeeds
-  (test-assert (verify-sig-base64 test-key "monkey party" sig))
+  (test-assert (valid-base64-signature? test-key "monkey party" sig))
   ;; Incorrect data fails
-  (test-assert (not (verify-sig-base64 test-key "something else" sig)))
+  (test-assert (not (valid-base64-signature? test-key "something else" sig)))
   ;; Fake signature fails
-  (test-assert (not (verify-sig-base64 test-key "monkey party"
-                                       "f41c3516")))
+  (test-assert (not (valid-base64-signature? test-key "monkey party"
+                                             "f41c3516")))
   ;; Should equal a re-run of itself
   (test-equal sig (sign-data-base64 test-key "monkey party"))
   ;; Shouldn't equal something different
