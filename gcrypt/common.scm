@@ -21,8 +21,8 @@
   #:use-module (gcrypt internal)
   #:use-module (system foreign)
   #:use-module (ice-9 match)
-  #:export (gcrypt-version
-            error-source error-string))
+  #:re-export (gcrypt-version)
+  #:export (error-source error-string))
 
 ;;; Commentary:
 ;;;
@@ -30,15 +30,6 @@
 ;;; initializes Libgcrypt as a side effect.
 ;;;
 ;;; Code:
-
-(define gcrypt-version
-  ;; According to the manual, this function must be called before any other,
-  ;; and it's not clear whether it can be called more than once.  So call it
-  ;; right here from the top level.
-  (let ((proc (libgcrypt->procedure '* "gcry_check_version" '(*))))
-    (lambda ()
-      "Return the version number of libgcrypt as a string."
-      (pointer->string (proc %null-pointer)))))
 
 (define error-source
   (let ((proc (libgcrypt->procedure '* "gcry_strsource" (list int))))

@@ -23,7 +23,9 @@
             libgcrypt->procedure
 
             define-enumerate-type
-            define-lookup-procedure))
+            define-lookup-procedure
+
+            gcrypt-version))
 
 ;;; Code:
 ;;;
@@ -94,3 +96,17 @@ value in O(1)."
                  (and (<= integer #,max) (>= integer #,min)
                       (let ((result (vector-ref values (- integer #,min))))
                         (and (> result 0) result)))))))))))
+
+(define gcrypt-version
+  ;; According to the manual, this function must be called before any other,
+  ;; and it's not clear whether it can be called more than once.  So call it
+  ;; right here from the top level.  During cross-compilation, the call to
+  ;; PROC fails with a 'system-error exception; catch it.
+  (let* ((proc    (libgcrypt->procedure '* "gcry_check_version" '(*)))
+         (version (catch 'system-error
+                    (lambda ()
+                      (pointer->string (proc %null-pointer)))
+                    (const ""))))
+    (lambda ()
+      "Return the version number of libgcrypt as a string."
+      version)))
