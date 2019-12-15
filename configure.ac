@@ -1,4 +1,4 @@
-AC_INIT([Guile-Gcrypt], [0.2.0], [cwebber@dustycloud.org],
+AC_INIT([Guile-Gcrypt], [0.2.1], [cwebber@dustycloud.org],
   [guile-gcrypt], [https://notabug.org/cwebber/guile-gcrypt])
 
 AC_CONFIG_AUX_DIR([build-aux])
