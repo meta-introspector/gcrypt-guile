@@ -329,7 +329,7 @@ return #f if not found."
               result
               (loop (+ 1 index)
                     ;; XXX: Call 'nth-data' *before* 'nth' to work around
-                    ;; <https://bugs.g10code.com/gnupg/issue1594>, which
+                    ;; <https://dev.gnupg.org/T1594>, which
                     ;; affects 1.6.0 and earlier versions.
                     (proc (or (canonical-sexp-nth-data sexp index)
                               (canonical-sexp-nth sexp index))
