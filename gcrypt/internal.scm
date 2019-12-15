@@ -30,7 +30,8 @@
 ;;; Code:
 ;;;
 ;;; This module provides tools for internal use.  The API of this module may
-;;; change anytime; you should not rely on it.
+;;; change anytime; you should not rely on it.  Loading this module
+;;; initializes Libgcrypt as a side effect.
 ;;;
 ;;; Comment:
 

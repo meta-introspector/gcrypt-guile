@@ -26,8 +26,7 @@
 
 ;;; Commentary:
 ;;;
-;;; Common code for the GNU Libgcrypt bindings.  Loading this module
-;;; initializes Libgcrypt as a side effect.
+;;; Common code for the GNU Libgcrypt bindings.
 ;;;
 ;;; Code:
 
