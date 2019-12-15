@@ -13,6 +13,7 @@ Please send Guix bug reports to <https://notabug.org/cwebber/guile-gcrypt>.
 * Changes in 0.2.1 (since 0.2.0)
 
 ** libgcrypt is now always properly initialized (https://bugs.gnu.org/37616)
+** (gcrypt base64) no longer imports (rnrs)
 
 * Changes in 0.2.0 (since 0.1.0)
 
