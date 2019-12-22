@@ -361,6 +361,11 @@ use pattern matching."
 (define (sexp->canonical-sexp sexp)
   "Return a canonical sexp equivalent to SEXP, a Scheme sexp as returned by
 'canonical-sexp->sexp'."
+  (define (string-hex-pad str)
+    (if (odd? (string-length str))
+        (string-append "0" str)
+        str))
+
   ;; XXX: This is inefficient, but the Libgcrypt API doesn't allow us to do
   ;; much better.
   (string->canonical-sexp
@@ -376,6 +381,9 @@ use pattern matching."
                ((bytevector? item)
                 (format port " #~a#"
                         (bytevector->base16-string item)))
+               ((integer? item)
+                (format port " #~a#"
+                        (string-hex-pad (number->string item 16))))
                (else
                 (error "unsupported sexp item type" item))))
 

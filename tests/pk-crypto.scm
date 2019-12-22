@@ -285,4 +285,12 @@
     sexp
     (canonical-sexp->sexp (sexp->canonical-sexp sexp))))
 
+;; In Guile-Gcrypt <= 0.2.1, 'canonical-sexp->sexp' did not support integers.
+(test-equal "sexp->canonical-sexp, big integers"
+  '(a (b #vu8(#x01 #x23 #x45 #x67 #x89))
+      (c #vu8(#x98 #x76 #x54 #x32 #x10)))
+  (canonical-sexp->sexp
+   (sexp->canonical-sexp
+    '(a (b #x123456789) (c #x9876543210)))))
+
 (test-end)
