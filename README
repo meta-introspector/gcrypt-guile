@@ -12,7 +12,7 @@ interface (FFI) of Guile.
 
 Requirements:
 
-  • GNU Guile 2.x, https://gnu.org/software/guile/
+  • GNU Guile 2.x >= 2.0.10, https://gnu.org/software/guile/
   • GNU Libgcrypt 1.8.x or later, https://gnupg.org/
 
 For more information, patches, bug reports, and all that, see:
