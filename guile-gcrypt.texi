@@ -10,7 +10,7 @@
 @include version.texi
 
 @copying
-Copyright @copyright{} 2018, 2019 Ludovic Courtès@*
+Copyright @copyright{} 2018, 2019, 2020 Ludovic Courtès@*
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -105,7 +105,20 @@ how you could report Libgcrypt errors to the user:
             proc (error-source err) (error-string err))))
 @end lisp
 
-These two procedures are detailed below.
+These two procedures are detailed below.  You can also refer to one of
+the @code{error/} constants exported by @code{(gcrypt common)} when
+looking for a specific error:
+
+@lisp
+(catch 'gcry-error
+  (lambda ()
+    ;; Do something with Guile-Gcrypt...
+    )
+  (lambda (key proc err)
+    (if (error-code=? err error/bad-signature)
+        (format (current-error-port) "Uh oh, bad signature!\n")
+        (format (current-error-port) @dots{}))))
+@end lisp
 
 @deffn {Scheme Procedure} error-source @var{err}
 Return the error source (a string) for @var{err}, an error code as thrown
