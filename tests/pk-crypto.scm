@@ -1,5 +1,5 @@
 ;;; guile-gcrypt --- crypto tooling for guile
-;;; Copyright © 2013, 2014, 2017, 2019 Ludovic Courtès <ludo@gnu.org>
+;;; Copyright © 2013, 2014, 2017, 2019, 2020 Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;; This file is part of guile-gcrypt.
 ;;;
@@ -21,6 +21,7 @@
   #:use-module (gcrypt utils)
   #:use-module (gcrypt base16)
   #:use-module (gcrypt hash)
+  #:use-module (gcrypt common)                    ;error codes
   #:use-module (srfi srfi-1)
   #:use-module (srfi srfi-11)
   #:use-module (srfi srfi-26)
@@ -193,6 +194,21 @@
                 (cut find-sexp-token <> 'public-key)
                 string->canonical-sexp)
        (list %key-pair %ecc-key-pair)))
+
+(test-equal "sign + verify, bogus signature"
+  `(verify . ,(gcrypt-error error/invalid-object))
+  (catch 'gcry-error
+    (lambda ()
+      (let* ((pair   (string->canonical-sexp %key-pair))
+             (secret (find-sexp-token pair 'private-key))
+             (public (find-sexp-token pair 'public-key))
+             (data   (bytevector->hash-data
+                      (sha256 (string->utf8 "Hello, world."))
+                      #:key-type (key-type public)))
+             (bogus  (string->canonical-sexp "(bogus sig)")))
+        (verify bogus data public)))
+    (lambda (key proc error)
+      (cons proc error))))
 
 (test-assert "sign + verify"
   (let* ((pair   (string->canonical-sexp %key-pair))

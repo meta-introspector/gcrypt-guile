@@ -1,5 +1,5 @@
 ;;; guile-gcrypt --- crypto tooling for guile
-;;; Copyright © 2013, 2014, 2015, 2017, 2019 Ludovic Courtès <ludo@gnu.org>
+;;; Copyright © 2013, 2014, 2015, 2017, 2019, 2020 Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright © 2019 Mathieu Othacehe <m.othacehe@gmail.com>
 ;;;
 ;;; This file is part of guile-gcrypt.
@@ -281,10 +281,15 @@ DATA must be a 'data' s-expression, as returned by
   (let ((proc (libgcrypt->procedure int "gcry_pk_verify" '(* * *))))
     (lambda (signature data public-key)
       "Verify that SIGNATURE is a signature of DATA with PUBLIC-KEY, all of
-which are gcrypt s-expressions."
-      (zero? (proc (canonical-sexp->pointer signature)
-                   (canonical-sexp->pointer data)
-                   (canonical-sexp->pointer public-key))))))
+which are gcrypt s-expressions; return #t if the verification was successful,
+#f otherwise.  Raise an error if, for example, one of the given s-expressions
+is invalid."
+      (let ((err (proc (canonical-sexp->pointer signature)
+                       (canonical-sexp->pointer data)
+                       (canonical-sexp->pointer public-key))))
+        (cond ((zero? err) #t)
+              ((error-code=? error/bad-signature err) #f)
+              (else (throw 'gcry-error 'verify err)))))))
 
 (define generate-key
   (let ((proc (libgcrypt->procedure int "gcry_pk_genkey" '(* *))))
