@@ -1,5 +1,5 @@
 ;;; guile-gcrypt --- crypto tooling for guile
-;;; Copyright © 2012, 2013, 2014, 2015, 2016, 2019 Ludovic Courtès <ludo@gnu.org>
+;;; Copyright © 2012, 2013, 2014, 2015, 2016, 2019, 2020 Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright © 2019 Mathieu Othacehe <m.othacehe@gmail.com>
 ;;;
 ;;; This file is part of guile-gcrypt.
@@ -35,8 +35,6 @@
             file-hash
             open-hash-input-port
 
-            sha1
-            sha256
             open-sha256-port
             port-sha256
             file-sha256
@@ -58,6 +56,13 @@
                       (name id size) ...)
   "Define hash algorithms with their NAME, numerical ID, and SIZE in bytes."
   (begin
+    ;; Make sure NAME is bound to follow best practices for syntax matching
+    ;; (info "(guile) Syntax Rules").  As a bonus, it provides convenient
+    ;; shorthand procedures.
+    (define-public name
+      (cut bytevector-hash <> id))
+    ...
+
     (define-enumerate-type name->integer symbol->integer
       (name id) ...)
 
@@ -126,12 +131,6 @@
         (proc algorithm (bytevector->pointer digest)
               (bytevector->pointer bv) (bytevector-length bv))
         digest))))
-
-(define sha1
-  (cut bytevector-hash <> (hash-algorithm sha1)))
-
-(define sha256
-  (cut bytevector-hash <> (hash-algorithm sha256)))
 
 (define open-md
   (let ((proc (libgcrypt->procedure int

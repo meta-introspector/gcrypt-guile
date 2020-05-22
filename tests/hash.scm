@@ -1,5 +1,5 @@
 ;;; guile-gcrypt --- crypto tooling for guile
-;;; Copyright © 2013, 2014, 2017, 2019 Ludovic Courtès <ludo@gnu.org>
+;;; Copyright © 2013, 2014, 2017, 2019, 2020 Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;; This file is part of guile-gcrypt.
 ;;;
@@ -82,8 +82,7 @@ In Guile <= 2.0.9, CBIPs were always fully buffered, so the
 
 (test-equal "sha512, empty"
   "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"
-  (bytevector->base16-string
-   (bytevector-hash #vu8() (hash-algorithm sha512))))
+  (bytevector->base16-string (sha512 #vu8())))
 
 (test-equal "sha512, hello"
   %hello-sha512

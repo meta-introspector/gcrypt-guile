@@ -170,9 +170,16 @@ Return the size in bytes of hashes produced by @var{algorithm}.
 The procedures below offer several ways to compute a hash.
 
 @deffn {Scheme Procedure} bytevector-hash @var{bv} @var{algorithm}
+@deffnx {Scheme Procedure} crc32 @var{bv}
 @deffnx {Scheme Procedure} sha1 @var{bv}
 @deffnx {Scheme Procedure} sha256 @var{bv}
+@deffnx {Scheme Procedure} sha512 @var{bv}
+@deffnx {Scheme Procedure} sha3-512 @var{bv}
 Return the hash @var{algorithm} of @var{bv} as a bytevector.
+
+Shorthand procedures like @code{sha256} are available for all the
+algorithms that are valid identifiers for @code{hash-algorithm} though
+for brevity only a handful are listed here.
 @end deffn
 
 @deffn {Scheme Procedure} open-hash-port @var{algorithm}
