@@ -1,7 +1,7 @@
 ;;; guile-gcrypt --- crypto tooling for guile
 ;;; Copyright © 2016 Christopher Allan Webber <cwebber@dustycloud.org>
 ;;; Copyright © 2019 Mathieu Othacehe <m.othacehe@gmail.com>
-;;; Copyright © 2019 Ludovic Courtès <ludo@gnu.org>
+;;; Copyright © 2019, 2020 Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;; This file is part of guile-gcrypt.
 ;;;
@@ -36,11 +36,25 @@
             valid-base64-signature?
             generate-signing-key))
 
+(define-syntax-rule (define-syntax-public name value)
+  (begin
+    (define-syntax name value)
+    (export name)))
+
 (define-syntax-rule (define-mac-algorithms name->integer
                       symbol->integer mac-size
                       (name id size) ...)
   "Define hash algorithms with their NAME, numerical ID, and SIZE in bytes."
   (begin
+    ;; Make sure NAME is bound to follow best practices for syntax matching
+    ;; (info "(guile) Syntax Rules").
+    (define-syntax-public name
+      (lambda (s)
+        (syntax-violation 'name "\
+syntactic keyword is meant to be used with 'mac-algorithm'"
+                          s s)))
+    ...
+
     (define-enumerate-type name->integer symbol->integer
       (name id) ...)
 
