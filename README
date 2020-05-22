@@ -1,7 +1,7 @@
 Guile-Gcrypt — Guile bindings to Libgcrypt
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Guile-Gcrypt provides a Guile 2.x interface to a subset of the
+Guile-Gcrypt provides a Guile 3.x/2.x interface to a subset of the
 GNU Libgcrypt crytographic library, which is itself used by the
 GNU Privacy Guard (GPG).
 
@@ -12,7 +12,7 @@ interface (FFI) of Guile.
 
 Requirements:
 
-  • GNU Guile 2.x >= 2.0.10, https://gnu.org/software/guile/
+  • GNU Guile 3.x or 2.x >= 2.0.10, https://gnu.org/software/guile/
   • GNU Libgcrypt 1.8.x or later, https://gnupg.org/
 
 For more information, patches, bug reports, and all that, see:
