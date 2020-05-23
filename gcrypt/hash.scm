@@ -27,6 +27,7 @@
   #:use-module (srfi srfi-26)
   #:export (hash-algorithm
             lookup-hash-algorithm
+            hash-algorithm-name
             hash-size
 
             bytevector-hash
@@ -52,7 +53,7 @@
 ;;;
 
 (define-syntax-rule (define-hash-algorithms name->integer
-                      symbol->integer hash-size
+                      symbol->integer integer->symbol hash-size
                       (name id size) ...)
   "Define hash algorithms with their NAME, numerical ID, and SIZE in bytes."
   (begin
@@ -63,7 +64,7 @@
       (cut bytevector-hash <> id))
     ...
 
-    (define-enumerate-type name->integer symbol->integer
+    (define-enumerate-type name->integer symbol->integer integer->symbol
       (name id) ...)
 
     (define-lookup-procedure hash-size
@@ -80,7 +81,7 @@
 
 ;; 'GCRY_MD_' values as of Libgcrypt 1.8.3.
 (define-hash-algorithms hash-algorithm
-  lookup-hash-algorithm
+  lookup-hash-algorithm hash-algorithm-name
   hash-size
 
   (md5 1 16)

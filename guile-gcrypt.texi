@@ -163,6 +163,11 @@ Return the hash algorithm corresponding to @var{id}, a symbol, or
 @code{#f} if @var{id} does not denote a known hash algorithm.
 @end deffn
 
+@deffn {Scheme Procedure} hash-algorithm-name @var{algorithm}
+Return the name, a symbol, of @var{algorithm}, a value as returned by
+@code{hash-algorithm}.
+@end deffn
+
 @deffn {Scheme Procedure} hash-size @var{algorithm}
 Return the size in bytes of hashes produced by @var{algorithm}.
 @end deffn
@@ -246,6 +251,11 @@ know algorithm.
 @deffn {Scheme Procedure} lookup-mac-algorithm @var{id}
 Return the MAC algorithm corresponding to @var{id}, a symbol, or
 @code{#f} if @var{id} does not denote a known MAC algorithm.
+@end deffn
+
+@deffn {Scheme Procedure} mac-algorithm-name @var{algorithm}
+Return the name, a symbol, of @var{algorithm}, a value as returned by
+@code{mac-algorithm}.
 @end deffn
 
 @deffn {Scheme Procedure} mac-size @var{algorithm}

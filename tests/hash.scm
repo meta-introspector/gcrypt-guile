@@ -57,6 +57,10 @@ In Guile <= 2.0.9, CBIPs were always fully buffered, so the
   (hash-algorithm blake2b-512)
   (lookup-hash-algorithm 'blake2b-512))
 
+(test-eq "hash-algorithm-name"
+  'sha3-512
+  (hash-algorithm-name (hash-algorithm sha3-512)))
+
 (test-equal "hash-size"
   (list 20 32 64)
   (map hash-size

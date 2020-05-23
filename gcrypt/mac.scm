@@ -28,6 +28,7 @@
   #:use-module (system foreign)
   #:export (mac-algorithm
             lookup-mac-algorithm
+            mac-algorithm-name
             mac-size
 
             sign-data
@@ -42,7 +43,7 @@
     (export name)))
 
 (define-syntax-rule (define-mac-algorithms name->integer
-                      symbol->integer mac-size
+                      symbol->integer integer->symbol mac-size
                       (name id size) ...)
   "Define hash algorithms with their NAME, numerical ID, and SIZE in bytes."
   (begin
@@ -55,7 +56,7 @@ syntactic keyword is meant to be used with 'mac-algorithm'"
                           s s)))
     ...
 
-    (define-enumerate-type name->integer symbol->integer
+    (define-enumerate-type name->integer symbol->integer integer->symbol
       (name id) ...)
 
     (define-lookup-procedure mac-size
@@ -63,7 +64,7 @@ syntactic keyword is meant to be used with 'mac-algorithm'"
       (id size) ...)))
 
 (define-mac-algorithms mac-algorithm
-  lookup-mac-algorithm
+  lookup-mac-algorithm mac-algorithm-name
   mac-size
 
   ;; GCRY_MAC_*

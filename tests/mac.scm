@@ -1,6 +1,6 @@
 ;;; guile-gcrypt --- crypto tooling for guile
 ;;; Copyright © 2016 Christopher Allan Webber <cwebber@dustycloud.org>
-;;; Copyright © 2019 Ludovic Courtès <ludo@gnu.org>
+;;; Copyright © 2019, 2020 Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;; This file is part of guile-gcrypt.
 ;;;
@@ -27,6 +27,10 @@
 (test-equal "lookup-mac-algorithm"
   (mac-algorithm hmac-sha3-256)
   (lookup-mac-algorithm 'hmac-sha3-256))
+
+(test-eq "mac-algorithm-name"
+  'hmac-sha3-512
+  (mac-algorithm-name (mac-algorithm hmac-sha3-512)))
 
 (test-equal "mac-size"
   (list 32 28 64 64)

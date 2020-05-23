@@ -59,6 +59,7 @@
                (list ENOSYS))))))
 
 (define-syntax-rule (define-enumerate-type name->integer symbol->integer
+                      integer->symbol
                       (name id) ...)
   (begin
     (define-syntax name->integer
@@ -71,7 +72,11 @@
         (lambda (symbol)
           "Look up SYMBOL and return the corresponding integer or #f if it
 could not be found."
-          (assq-ref alist symbol))))))
+          (assq-ref alist symbol))))
+
+    (define-lookup-procedure integer->symbol
+      "Return the name (a symbol) corresponding to the given integer value."
+      (id name) ...)))
 
 (define-syntax define-lookup-procedure
   (lambda (s)
