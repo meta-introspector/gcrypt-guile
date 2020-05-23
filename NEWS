@@ -2,13 +2,21 @@
 #+TITLE: Guile-Gcrypt NEWS – history of user-visible changes
 #+STARTUP: content hidestars
 
-Copyright © 2019 Ludovic Courtès <ludo@gnu.org>
+Copyright © 2019, 2020 Ludovic Courtès <ludo@gnu.org>
 
   Copying and distribution of this file, with or without modification,
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+Run “info guile-gcrypt” for details about the changes described below.
 Please send Guix bug reports to <https://notabug.org/cwebber/guile-gcrypt>.
+
+* Changes in 0.3.0 (since 0.2.1)
+** ‘sexp->canonical-sexp->sexp’ now accepts integers
+** (gcrypt common) exports ‘error/’ constants and error handling procedures
+** ‘verify’ now throws upon errors other than ‘error/bad-signature’
+** (gcrypt hmac) and (gcrypt hash) export bindings for their syntax literals
+** New ‘hash-algorithm-name’ and ‘mac-algorithm-name’ procedures
 
 * Changes in 0.2.1 (since 0.2.0)
 
