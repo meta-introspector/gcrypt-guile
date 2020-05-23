@@ -1,5 +1,5 @@
 ;;; guile-gcrypt --- crypto tooling for guile
-;;; Copyright © 2019 Ludovic Courtès <ludo@gnu.org>
+;;; Copyright © 2019, 2020 Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;; This file is part of guile-gcrypt.
 ;;;
@@ -79,7 +79,9 @@ could not be found."
 value in O(1)."
     (syntax-case s ()
       ((_ lookup docstring (index value) ...)
-       (let* ((values (syntax->datum #'((index . value) ...)))
+       (let* ((values (map cons
+                           (syntax->datum #'(index ...))
+                           #'(value ...)))
               (min    (apply min (syntax->datum #'(index ...))))
               (max    (apply max (syntax->datum #'(index ...))))
               (array  (let loop ((i max)
@@ -87,7 +89,7 @@ value in O(1)."
                         (if (< i min)
                             result
                             (loop (- i 1)
-                                  (cons (or (assv-ref values i) -1)
+                                  (cons (or (assv-ref values i) *unspecified*)
                                         result))))))
          #`(define lookup
              ;; Allocate a big sparse vector.
@@ -96,7 +98,9 @@ value in O(1)."
                  docstring
                  (and (<= integer #,max) (>= integer #,min)
                       (let ((result (vector-ref values (- integer #,min))))
-                        (and (> result 0) result)))))))))))
+                        (if (unspecified? result)
+                            #f
+                            result)))))))))))
 
 (define gcrypt-version
   ;; According to the manual, this function must be called before any other,
