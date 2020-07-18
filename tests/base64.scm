@@ -29,9 +29,21 @@
 (define (string->base64 str)
   (base64-encode (string->utf8 str)))
 
+(define (base64->string base64)
+  (utf8->string (base64-decode base64)))
+
+(define (string->base64-padding str padding)
+  (let ((bv (string->utf8 str)))
+    (base64-encode bv 0 (bytevector-length bv) #f (not padding))))
+
+(define (base64->string-padding base64 padding)
+  (utf8->string (base64-decode base64 base64url-alphabet #f #f padding)))
+
 ;;; Test vectors from <https://tools.ietf.org/rfc/rfc4648.txt>.
 
 (test-begin "base64")
+
+;; Encoding
 
 (test-equal "empty string"
   (string->base64 "")
@@ -60,5 +72,51 @@
 (test-equal "foobar"
   (string->base64 "foobar")
   "Zm9vYmFy")
+
+(test-equal "foob (no padding)"
+  (string->base64-padding "foob" #f)
+  "Zm9vYg")
+
+(test-equal "foob (padding)"
+  (string->base64-padding "foob" #t)
+  "Zm9vYg==")
+
+;; Decoding
+
+(test-equal "empty string"
+  (base64->string "")
+  "")
+
+(test-equal "f"
+  (base64->string "Zg==")
+  "f")
+
+(test-equal "fo"
+  (base64->string "Zm8=")
+  "fo")
+
+(test-equal "foo"
+  (base64->string "Zm9v")
+  "foo")
+
+(test-equal "foob"
+  (base64->string "Zm9vYg==")
+  "foob")
+
+(test-equal "fooba"
+  (base64->string "Zm9vYmE=")
+  "fooba")
+
+(test-equal "foobar"
+  (base64->string "Zm9vYmFy")
+  "foobar")
+
+(test-equal "foob (no padding)"
+  (base64->string-padding "Zm9vYg" #f)
+  "foob")
+
+(test-equal "foob (padding)"
+  (base64->string-padding "Zm9vYg==" #t)
+  "foob")
 
 (test-end "base64")
