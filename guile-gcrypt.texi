@@ -10,7 +10,7 @@
 @include version.texi
 
 @copying
-Copyright @copyright{} 2018, 2019, 2020 Ludovic Courtès@*
+Copyright @copyright{} 2018, 2019, 2020, 2021 Ludovic Courtès@*
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -194,8 +194,8 @@ called, it returns the hash (a bytevector) for @var{algorithm} of all
 the data written to the output port.
 @end deffn
 
-@deffn {Scheme Procedure} port-hash @var{algorithm}
-@deffnx {Scheme Procedure} port-sha256
+@deffn {Scheme Procedure} port-hash @var{algorithm} @var{port}
+@deffnx {Scheme Procedure} port-sha256 @var{port}
 Return the @var{algorithm} hash (a bytevector) of all the data drained
 from @var{port}.
 @end deffn
