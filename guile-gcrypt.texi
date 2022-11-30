@@ -10,7 +10,7 @@
 @include version.texi
 
 @copying
-Copyright @copyright{} 2018, 2019, 2020, 2021 Ludovic Courtès@*
+Copyright @copyright{} 2018, 2019, 2020, 2021, 2022 Ludovic Courtès@*
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -338,6 +338,50 @@ such thing for its objects (@pxref{Initializing the library, secure
 memory,, gcrypt, The Libgcrypt Library}).  Thus the above example uses
 @code{find-sexp-token}, which accesses the canonical sexp directly, in
 search for the @code{public-key} symbol.
+
+Those canonical sexps are the basic way to communicate information to
+public-key crytography routines.  The following procedures, for example,
+are available to make and verify cryptographic signatures.
+
+@deffn {Scheme Procedure} bytevector->hash-data @var{bv} @
+  [@var{hash-algo} "sha256"] [#:key-type 'ecc]
+Given @var{bv}, a bytevector containing a hash of type @var{hash-algo},
+return an s-expression suitable for use as the @var{data} argument for
+@code{sign} (see below).  @var{key-type} must be a symbol: @code{'dsa},
+@code{'ecc}, or @code{'rsa}.
+@end deffn
+
+@deffn {Scheme Procedure} sign @var{data} @var{secret-key}
+Sign @var{data}, a canonical s-expression representing a suitable hash,
+with @var{secret-key} (a canonical s-expression whose car is
+@code{private-key}.)  Note that @var{data} must be a @code{data}
+s-expression, as returned by @code{bytevector->hash-data}
+(@pxref{Cryptographic Functions,,, gcrypt, The Libgcrypt Libgcrypt}).
+@end deffn
+
+@deffn {Scheme Procedure} verify @var{signature} @var{data} @var{public-key}
+Verify that @var{signature} is a signature of @var{data} with
+@var{public-key}, all of which are gcrypt s-expressions; return
+@code{#t} if the verification was successful, @code{#f} otherwise.
+Raise an error if, for example, one of the given s-expressions is
+invalid.
+@end deffn
+
+As an example, assuming @var{pair} is bound to the canonical sexp
+representation of a key pair (as returned by @code{generate-key}), the
+following snippet signs a string and verifies its signature:
+
+@lisp
+(let* ((secret (find-sexp-token pair 'private-key))
+       (public (find-sexp-token pair 'public-key))
+       (data   (bytevector->hash-data
+                (sha256 (string->utf8 "Hello, world."))
+                #:key-type (key-type public)))
+       (sig    (sign data secret)))
+  (verify sig data public))
+
+@result{} #t
+@end lisp
 
 @xref{Used S-expressions,,, gcrypt, The Libgcrypt Library}, for more
 information on the canonical sexps consumed and produced by public-key
