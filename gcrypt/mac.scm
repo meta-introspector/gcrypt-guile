@@ -1,7 +1,7 @@
 ;;; guile-gcrypt --- crypto tooling for guile
 ;;; Copyright © 2016 Christopher Allan Webber <cwebber@dustycloud.org>
 ;;; Copyright © 2019 Mathieu Othacehe <m.othacehe@gmail.com>
-;;; Copyright © 2019, 2020 Ludovic Courtès <ludo@gnu.org>
+;;; Copyright © 2019, 2020, 2022 Ludovic Courtès <ludo@gnu.org>
 ;;;
 ;;; This file is part of guile-gcrypt.
 ;;;
@@ -87,6 +87,18 @@ syntactic keyword is meant to be used with 'mac-algorithm'"
   (hmac-sha3-256 116 32)
   (hmac-sha3-384 117 48)
   (hmac-sha3-512 118 64)
+  (hmac-gostr3411-cp  119 32)
+  (hmac-blake2b-512   120 64)
+  (hmac-blake2b-384   121 48)
+  (hmac-blake2b-256   122 32)
+  (hmac-blake2b-160   123 20)
+  (hmac-blake2s-256   124 32)
+  (hmac-blake2s-224   125 28)
+  (hmac-blake2s-160   126 20)
+  (hmac-blake2s-128   127 16)
+  (hmac-sm3           128 32)
+  (hmac-sha512-256    129 32)
+  (hmac-sha512-224    130 28)
 
   (cmac-aes 201 16)
   (cmac-3des 202 8)
