@@ -1,5 +1,5 @@
 ;;; guile-gcrypt --- crypto tooling for guile
-;;; Copyright © 2012, 2013, 2014, 2015, 2016, 2019, 2020 Ludovic Courtès <ludo@gnu.org>
+;;; Copyright © 2012, 2013, 2014, 2015, 2016, 2019, 2020, 2022 Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright © 2019 Mathieu Othacehe <m.othacehe@gmail.com>
 ;;;
 ;;; This file is part of guile-gcrypt.
@@ -79,7 +79,7 @@
                         "gcry_md_get_algo_dlen"
                         (list int)))
 
-;; 'GCRY_MD_' values as of Libgcrypt 1.8.3.
+;; 'GCRY_MD_' values as of Libgcrypt 1.8.8.
 (define-hash-algorithms hash-algorithm
   lookup-hash-algorithm hash-algorithm-name
   hash-size
@@ -119,7 +119,10 @@
   (blake2s-256 322 32)
   (blake2s-224 323 28)
   (blake2s-160 324 20)
-  (blake2s-128 325 16))
+  (blake2s-128 325 16)
+  (sm3         326 32)
+  (sha512-256  327 32)
+  (sha512-224  328 28))
 
 
 (define bytevector-hash
