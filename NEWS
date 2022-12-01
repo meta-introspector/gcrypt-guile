@@ -2,7 +2,7 @@
 #+TITLE: Guile-Gcrypt NEWS – history of user-visible changes
 #+STARTUP: content hidestars
 
-Copyright © 2019, 2020 Ludovic Courtès <ludo@gnu.org>
+Copyright © 2019, 2020, 2022 Ludovic Courtès <ludo@gnu.org>
 
   Copying and distribution of this file, with or without modification,
   are permitted in any medium without royalty provided the copyright
@@ -11,6 +11,11 @@ Copyright © 2019, 2020 Ludovic Courtès <ludo@gnu.org>
 Run “info guile-gcrypt” for details about the changes described below.
 Please send Guix bug reports to <https://notabug.org/cwebber/guile-gcrypt>.
 
+* Changes in 0.4.0 (since 0.3.0)
+** ‘base64-encode’ and ‘base64-decode’ now let you optionally control padding
+** New supported algorithms added to (gcrypt hash)
+** New supported algorithms added to (gcrypt mac)
+** Improvements and fixes to the manual
 * Changes in 0.3.0 (since 0.2.1)
 ** ‘sexp->canonical-sexp->sexp’ now accepts integers
 ** (gcrypt common) exports ‘error/’ constants and error handling procedures
