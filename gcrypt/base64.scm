@@ -3,7 +3,7 @@
 ;; This module was renamed from (weinholt text base64 (1 0 20100612)) to
 ;; (guix base64) by Nikita Karetnikov <nikita@karetnikov.org> on
 ;; February 12, 2014.  It was later renamed to (gcrypt base64) by
-;; Christopher Allan Webber <cwebber@dustycloud.org> on May 20, 2017.
+;; Christine Lemmer-Webber <cwebber@dustycloud.org> on May 20, 2017.
 ;;
 ;; Some optimizations made by Ludovic Courtès <ludo@gnu.org>, 2015.
 ;; Turned into a Guile module (instead of R6RS).
